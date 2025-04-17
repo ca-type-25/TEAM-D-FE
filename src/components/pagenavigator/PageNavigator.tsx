@@ -7,6 +7,12 @@ const PageNavigator: React.FC = () => {
         <div className="pageNavigators">
             <NavLink to={'/'}>Home</NavLink>
             <NavLink to={'/trips'}>Trips</NavLink>
+            <NavLink to={'/countries'}>Countries</NavLink>
+            <NavLink to={'/destinations'}>Destinations</NavLink>
+            <NavLink to={'/activities'}>Activities</NavLink>
+            <NavLink to={'/reviews'}>Reviews</NavLink>
+            <NavLink to={'/login'}>Login</NavLink>
+            <NavLink to={'/register'}>Register</NavLink>
         </div>
     )
 }

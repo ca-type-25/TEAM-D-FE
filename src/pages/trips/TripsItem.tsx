@@ -24,6 +24,7 @@ const TripsItem: React.FC = () => {
     return (
         <div>
             <h1>{name} ({category.name})</h1>
+            <Link to={`/edit-trip/${id}`} >Edit</Link>
 
             <p>Description: {description}</p>
             <p>Price: {price} EUR.</p>

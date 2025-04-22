@@ -39,7 +39,7 @@ function App() {
           <Route path="trips" element={<TripsPage />} />
           <Route path="trips/:id" element={<TripsItem />} />
           <Route path="create-trip" element={<CreateTrip />} />
-          <Route path="edit-trip" element={<EditTrip />} />
+          <Route path="edit-trip/:id" element={<EditTrip />} />
 
 
           <Route path="destinations" element={<DestinationsPage />} />

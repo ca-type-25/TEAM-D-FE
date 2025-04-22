@@ -2,10 +2,13 @@ import { useEffect, useState } from "react"
 import { API_URL } from "../../utils/config"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
+import { Trip } from "../../types/TypesExport"
 
-// type TripFormProps =
+type TripFormProps = {
+    editTripData?: Trip
+}
 
-const TripsForm: React.FC = () => {
+const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
     const navigate = useNavigate()
 
     const [categories, setCategories] = useState([])
@@ -46,6 +49,15 @@ const TripsForm: React.FC = () => {
         }
     }
 
+    useEffect(() => {
+        if (editTripData) {
+            setName(editTripData.name)
+            setDescription(editTripData.description)
+            setPrice(editTripData.price)
+            setSelectedCategory(editTripData.category?._id || editTripData.category)
+            setSelectedDestinations(editTripData.destination.map(destination => destination._id || destination))
+        }
+    }, [editTripData])
 
 
     const formHandler = (event: React.FormEvent) => {
@@ -59,10 +71,13 @@ const TripsForm: React.FC = () => {
             destination: selectedDestinations
         }
 
-        axios.post(`${API_URL}/trips`, newTrip)
-        navigate(`/trips`)
-
-        console.log(newTrip)
+        if (editTripData) {
+            axios.put(`${API_URL}/trips/${editTripData._id}`, newTrip)
+            navigate(`/trips`)
+        } else {
+            axios.post(`${API_URL}/trips`, newTrip)
+            navigate(`/trips`)
+        }
     }
 
     return (
@@ -81,7 +96,7 @@ const TripsForm: React.FC = () => {
                     <input type="number" name="price" id="price" value={price} onChange={priceHandler} />
                 </div>
                 <div className="formControl">
-                    <select name="category" id="category" onChange={categoryHandler}>
+                    <select name="category" id="category" onChange={categoryHandler} value={selectedCategory}>
                     <option value="">Select a category</option>
                     {categories.map(category => (
                         <option key={category._id} value={category._id}>{category.name}</option>

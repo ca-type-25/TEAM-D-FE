@@ -1,9 +1,14 @@
-const RegisterPage: React.FC = () => {
+import RegisterForm from '../../components/forms/RegisterForm'
+import LogInLink from '../../components/links/LoginLink'
 
-    return (
-        <div>
-            <h1>Register Page</h1>
-        </div>
-    )
-}
+const RegisterPage = () => (
+  <div className="max-w-md mx-auto mt-10">
+    <h1 className="text-2xl mb-4">Register</h1>
+    <RegisterForm />
+    <div className="mt-4">
+      <LogInLink />
+    </div>
+  </div>
+)
+
 export default RegisterPage

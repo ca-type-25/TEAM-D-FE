@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // 👈 Turi būti kartu su React importais
+import { Link, useNavigate } from "react-router-dom";
 import { getDestinations } from "../../utils/api";
 
 interface Destination {
@@ -44,10 +44,11 @@ const DestinationsPage: React.FC = () => {
   return (
     <div>
       <h1>Visos vietos (Destinations)</h1>
+      <Link to={'/create-destination'} >Create</Link>
       <ul>
         {destinations.map((d) => (
           <li key={d._id} style={{ marginBottom: "1rem" }}>
-            <strong>{d.name}</strong> – {d.country?.name || "Nežinoma šalis"}
+            <Link to={`/destinations/${d._id}`}><strong>{d.name}</strong></Link> – {d.country?.name || "Nežinoma šalis"}
             <br />
             <small>{d.description}</small>
             <br />

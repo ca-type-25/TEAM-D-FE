@@ -9,12 +9,6 @@ interface ExternalCountry {
   };
 }
 
-// Tipas iš tavo DB
-interface CountryFromDB {
-  _id: string;
-  name: string;
-}
-
 const CreateDestination: React.FC = () => {
   const [countries, setCountries] = useState<{ name: string }[]>([]);
   const [formData, setFormData] = useState({
@@ -23,7 +17,7 @@ const CreateDestination: React.FC = () => {
     description: "",
     latitude: 0,
     longitude: 0,
-    country: "",
+    country: "", // čia saugomas šalies pavadinimas
   });
 
   useEffect(() => {
@@ -65,27 +59,18 @@ const CreateDestination: React.FC = () => {
       return;
     }
 
+    const payload = {
+      name: formData.name,
+      location: formData.location,
+      description: formData.description,
+      geolocation: {
+        latitude: Number(formData.latitude),
+        longitude: Number(formData.longitude),
+      },
+      countryName: formData.country, // svarbiausias pakeitimas
+    };
+
     try {
-      const response = await API.get<CountryFromDB[]>("/countries");
-      const countryMatch = response.data.find(
-        (c) => c.name === formData.country
-      );
-      if (!countryMatch) {
-        alert("Šalis nerasta duomenų bazėje");
-        return;
-      }
-
-      const payload = {
-        name: formData.name,
-        location: formData.location,
-        description: formData.description,
-        country: countryMatch._id,
-        geolocation: {
-          latitude: Number(formData.latitude),
-          longitude: Number(formData.longitude),
-        },
-      };
-
       await API.post("/destinations", payload);
       alert("Vieta sėkmingai sukurta!");
     } catch (err) {

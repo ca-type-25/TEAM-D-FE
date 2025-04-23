@@ -17,7 +17,8 @@ const LoginForm = () => {
       const data = await res.json()
       if (res.ok) {
         localStorage.setItem('token', data.token)
-        navigate('/')
+        localStorage.setItem('userId', data.id)
+        navigate('/user-profile')
       } else {
         alert(data.message || 'Login failed')
       }

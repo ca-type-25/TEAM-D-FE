@@ -57,7 +57,7 @@ function App() {
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="activities/:id" element={<ActivitiesItem />} />
           <Route path="create-activity" element={<CreateActivity />} />
-          <Route path="edit-activity" element={<EditActivity />} />
+          <Route path="edit-activity/:id" element={<EditActivity />} />
 
 
           <Route path="reviews" element={<ReviewsPage />} />

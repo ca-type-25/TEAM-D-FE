@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // 👈 Turi būti kartu su React importais
+import { Link, useNavigate } from "react-router-dom";
 import { getDestinations } from "../../utils/api";
 
 interface Destination {

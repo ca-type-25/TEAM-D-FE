@@ -71,11 +71,21 @@ const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
             destination: selectedDestinations
         }
 
+        const token = localStorage.getItem('token')
+
         if (editTripData) {
-            axios.put(`${API_URL}/trips/${editTripData._id}`, newTrip)
+            axios.put(`${API_URL}/trips/${editTripData._id}`, newTrip, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             navigate(`/trips`)
         } else {
-            axios.post(`${API_URL}/trips`, newTrip)
+            axios.post(`${API_URL}/trips`, newTrip, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
             navigate(`/trips`)
         }
     }
@@ -115,7 +125,7 @@ const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
             
             
             
-                <button type="submit">Create!</button>
+                <button type="submit">{editTripData ? 'Edit' : 'Create'}</button>
             </form>
 
         </>

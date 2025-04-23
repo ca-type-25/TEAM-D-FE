@@ -5,9 +5,15 @@ import { Link } from "react-router-dom"
 const MyTrips: React.FC = () => {
     const [myTrips, setMyTrips] = useState([])
 
+    const token = localStorage.getItem('token')
+
 useEffect(() => {
     const fetchMyTrips = async () => {
-        const res = await fetch(`${API_URL}/trips/my-trips`)
+        const res = await fetch(`${API_URL}/trips/my-trips`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
         const data = await res.json()
         setMyTrips(data)
     }

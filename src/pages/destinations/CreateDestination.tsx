@@ -2,34 +2,38 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import API from "../../utils/api";
 
-// Tipas iš restcountries API
-interface ExternalCountry {
+// Tipas gautai šaliai iš API
+interface RestCountry {
   name: {
     common: string;
   };
 }
 
+// Komponentas naujos vietos kūrimui
 const CreateDestination: React.FC = () => {
+  // Šalių sąrašas dropdown'ui
   const [countries, setCountries] = useState<{ name: string }[]>([]);
+
+  // Formos duomenų būsena
   const [formData, setFormData] = useState({
     name: "",
-    location: "",
     description: "",
     latitude: 0,
     longitude: 0,
-    country: "", // čia saugomas šalies pavadinimas
+    country: "", // šalies pavadinimas kaip string
   });
 
+  // Užkrauna šalis iš REST API tik vieną kartą
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const res = await axios.get<ExternalCountry[]>(
+        const res = await axios.get<RestCountry[]>(
           "https://restcountries.com/v3.1/all"
         );
         const sorted = res.data
           .map((c) => ({ name: c.name.common }))
           .sort((a, b) => a.name.localeCompare(b.name));
-        setCountries(sorted);
+        setCountries(sorted); // nustatom dropdown'ui
       } catch (err) {
         console.error("Error fetching countries", err);
       }
@@ -37,19 +41,20 @@ const CreateDestination: React.FC = () => {
     fetchCountries();
   }, []);
 
+  // Valdo kiekvieno input'o pasikeitimą
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Kai spaudžiam „Create“ – siunčiam į backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ Validacija: patikrinam ar laukai užpildyti
+    // Greita validacija – visi laukai turi būti užpildyti
     if (
       !formData.name.trim() ||
-      !formData.location.trim() ||
       !formData.description.trim() ||
       !formData.latitude ||
       !formData.longitude ||
@@ -59,17 +64,18 @@ const CreateDestination: React.FC = () => {
       return;
     }
 
+    // Paruošiam payload su teisinga struktūra backend'ui
     const payload = {
       name: formData.name,
-      location: formData.location,
       description: formData.description,
       geolocation: {
         latitude: Number(formData.latitude),
         longitude: Number(formData.longitude),
       },
-      countryName: formData.country, // svarbiausias pakeitimas
+      country: formData.country,
     };
 
+    // Siunčiam duomenis į backend
     try {
       await API.post("/destinations", payload);
       alert("Vieta sėkmingai sukurta!");
@@ -81,12 +87,9 @@ const CreateDestination: React.FC = () => {
   return (
     <form onSubmit={handleSubmit}>
       <h1>Create New Destination</h1>
+
+      {/* Vieta, aprašymas ir koordinatės */}
       <input name="name" placeholder="Name" onChange={handleChange} />
-      <input
-        name="location"
-        placeholder="Location (city)"
-        onChange={handleChange}
-      />
       <input
         name="description"
         placeholder="Description"
@@ -104,6 +107,8 @@ const CreateDestination: React.FC = () => {
         placeholder="Longitude"
         onChange={handleChange}
       />
+
+      {/* Dropdown'as šalims iš REST API */}
       <select name="country" onChange={handleChange}>
         <option value="">Select country</option>
         {countries.map((c, i) => (
@@ -112,6 +117,8 @@ const CreateDestination: React.FC = () => {
           </option>
         ))}
       </select>
+
+      {/* Išsaugojimo mygtukas */}
       <button type="submit">Create</button>
     </form>
   );

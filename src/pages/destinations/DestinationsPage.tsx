@@ -2,17 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getDestinations } from "../../utils/api";
 
+// Tipas atitinkantis destination modelį iš backend
 interface Destination {
   _id: string;
   name: string;
-  location: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  country?: {
-    _id: string;
-    name: string;
+  country: string;
+  geolocation: {
+    longitude: number;
+    latitude: number;
   };
+  description: string;
 }
 
 const DestinationsPage: React.FC = () => {
@@ -20,14 +19,14 @@ const DestinationsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const limit = 15;
-  const sort = "country.name";
-  const navigate = useNavigate(); // 👈 Navigacija
+  const sort = "country"; // rūšiavimas pagal šalį
+  const navigate = useNavigate();
 
+  // Užkrovimas kai keičiasi puslapis
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
         const response = await getDestinations(page, limit, sort);
-        console.log("Gautos vietos:", response.data);
         setDestinations(response.data);
       } catch (error) {
         console.error("Klaida gaunant vietas:", error);
@@ -44,17 +43,20 @@ const DestinationsPage: React.FC = () => {
   return (
     <div>
       <h1>Visos vietos (Destinations)</h1>
-      <Link to={'/create-destination'} >Create</Link>
+
+      {/* Nuoroda į sukurti naują vietą */}
+      <Link to={"/create-destination"}>➕ Pridėti naują vietą</Link>
+
       <ul>
         {destinations.map((d) => (
           <li key={d._id} style={{ marginBottom: "1rem" }}>
-            <Link to={`/destinations/${d._id}`}><strong>{d.name}</strong></Link> – {d.country?.name || "Nežinoma šalis"}
+            {/* Vieta ir šalis */}
+            <Link to={`/destinations/${d._id}`}>
+              <strong>{d.name}</strong>
+            </Link>{" "}
+            – {d.country || "Nežinoma šalis"}
             <br />
             <small>{d.description}</small>
-            <br />
-            <em>
-              Geo: ({d.latitude}, {d.longitude})
-            </em>
             <br />
             {/* Redagavimo mygtukas */}
             <button onClick={() => navigate(`/edit-destination?id=${d._id}`)}>
@@ -64,6 +66,7 @@ const DestinationsPage: React.FC = () => {
         ))}
       </ul>
 
+      {/* Navigacija tarp puslapių */}
       <div style={{ marginTop: "1rem" }}>
         <button
           onClick={() => setPage((p) => Math.max(p - 1, 1))}

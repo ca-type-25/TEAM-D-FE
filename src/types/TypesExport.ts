@@ -1,3 +1,12 @@
+export interface Trip {
+    _id: string,
+    name: string,
+    description: string,
+    price: number,
+    category: string,
+    destination: string[],
+    user: string
+}
 
 export interface Activity {
   _id: string
@@ -16,4 +25,9 @@ export interface Destination {
     latitude: number
   }
   description: string
+}
+
+export interface Category {
+  _id: string,
+  name: string
 }

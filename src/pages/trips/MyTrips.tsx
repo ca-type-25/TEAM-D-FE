@@ -20,8 +20,9 @@ useEffect(() => {
     fetchMyTrips()
 }, [])
 
-console.log(myTrips)
-
+if (!token) {
+    return <p>ss</p>
+}
     return (
         <div>
             {myTrips && myTrips.length > 0 ? (

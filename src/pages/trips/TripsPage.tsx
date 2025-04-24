@@ -35,7 +35,7 @@ const TripsPage: React.FC = () => {
                 <h1>No trips yet...</h1>
             )}
 
-            <Link to={'/create-trip'}>Create trip</Link>
+            <Link to={'/create-trip'}>Create trip!</Link>
         </div>
     )
 }

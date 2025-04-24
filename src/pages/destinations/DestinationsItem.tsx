@@ -2,29 +2,25 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../../utils/api";
 
-// Duomenų struktūra
+// Tipas atitinkantis backend'o destination modelį
 interface Destination {
   _id: string;
   name: string;
-  location: string;
   description: string;
   geolocation: {
     latitude: number;
     longitude: number;
   };
-  country?: {
-    _id: string;
-    name: string;
-  };
+  country: string; // paprastas string, pvz. "Lithua"
 }
 
 const DestinationItem: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // ID iš URL
+  const { id } = useParams<{ id: string }>(); // Gaunam ID iš URL
   const navigate = useNavigate(); // Navigacijai atgal
   const [destination, setDestination] = useState<Destination | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Užkrovimas kai keičiasi ID
+  // Užkraunam konkrečią vietą pagal ID
   useEffect(() => {
     const fetchDestination = async () => {
       try {
@@ -45,6 +41,7 @@ const DestinationItem: React.FC = () => {
 
   return (
     <div style={{ padding: "1rem" }}>
+      {/* Grįžimo mygtukas */}
       <button
         onClick={() => navigate("/destinations")}
         style={{ marginBottom: "1rem" }}
@@ -52,21 +49,22 @@ const DestinationItem: React.FC = () => {
         ← Grįžti atgal
       </button>
 
+      {/* Informacija apie vietą */}
       <h1>{destination.name}</h1>
       <p>
-        <strong>Šalis:</strong> {destination.country?.name || "Nežinoma"}
-      </p>
-      <p>
-        <strong>Miestas / vieta:</strong> {destination.location}
+        <strong>Šalis:</strong> {destination.country || "Nežinoma"}
       </p>
       <p>
         <strong>Aprašymas:</strong> {destination.description}
       </p>
-      <p>
-        <strong>Koordinatės:</strong> {destination.geolocation.latitude},{" "}
-        {destination.geolocation.longitude}
-      </p>
+      {destination.geolocation && (
+        <p>
+          <strong>Koordinatės:</strong> {destination.geolocation.latitude},{" "}
+          {destination.geolocation.longitude}
+        </p>
+      )}
 
+      {/* Redagavimo mygtukas */}
       <button
         style={{ marginTop: "1rem" }}
         onClick={() => navigate(`/edit-destination?id=${destination._id}`)}

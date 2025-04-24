@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import API from "../../utils/api";
 
+// Tipas šaliai iš REST API
 interface Country {
-  _id: string;
-  name: string;
+  name: {
+    common: string;
+  };
 }
 
 const EditDestination: React.FC = () => {
@@ -12,14 +15,16 @@ const EditDestination: React.FC = () => {
   const destinationId = searchParams.get("id");
   const navigate = useNavigate();
 
-  const [countries, setCountries] = useState<Country[]>([]);
+  // Būsena šalių dropdown'ui
+  const [countries, setCountries] = useState<{ name: string }[]>([]);
+
+  // Formos duomenys
   const [formData, setFormData] = useState({
     name: "",
-    location: "",
     description: "",
     latitude: 0,
     longitude: 0,
-    country: "",
+    country: "", // dabar tiesiog string
   });
 
   const [loading, setLoading] = useState(true);
@@ -27,23 +32,30 @@ const EditDestination: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Vienu metu gaunam ir destination duomenis, ir šalių sąrašą
         const [destinationRes, countriesRes] = await Promise.all([
           API.get(`/destinations/${destinationId}`),
-          API.get("/countries"),
+          axios.get<Country[]>("https://restcountries.com/v3.1/all"),
         ]);
 
+        // Nuskaityti esamos vietos duomenys
         const destination = destinationRes.data;
-        setCountries(countriesRes.data);
 
+        // Apdorojam ir rūšiuojam šalis dropdown'ui
+        const sorted = countriesRes.data
+          .map((c) => ({ name: c.name.common }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setCountries(sorted);
+
+        // Užpildom formą su esamais duomenimis
         setFormData({
           name: destination.name,
-          location: destination.location,
           description: destination.description,
           latitude:
             destination.latitude || destination.geolocation?.latitude || 0,
           longitude:
             destination.longitude || destination.geolocation?.longitude || 0,
-          country: destination.country?._id || "",
+          country: destination.country || "", // šalis kaip string
         });
       } catch (error) {
         console.error("Klaida kraunant duomenis:", error);
@@ -55,6 +67,7 @@ const EditDestination: React.FC = () => {
     if (destinationId) fetchData();
   }, [destinationId]);
 
+  // Valdo įrašų keitimą
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -63,12 +76,12 @@ const EditDestination: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Siunčia atnaujintus duomenis į backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await API.put(`/destinations/${destinationId}`, {
         name: formData.name,
-        location: formData.location,
         description: formData.description,
         country: formData.country,
         geolocation: {
@@ -83,6 +96,7 @@ const EditDestination: React.FC = () => {
     }
   };
 
+  // Ištrina vietą
   const handleDelete = async () => {
     const confirmed = window.confirm("Ar tikrai nori ištrinti šią vietą?");
     if (!confirmed || !destinationId) return;
@@ -102,24 +116,24 @@ const EditDestination: React.FC = () => {
   return (
     <form onSubmit={handleSubmit}>
       <h1>Redaguoti vietą</h1>
+
+      {/* Pavadinimas */}
       <input
         name="name"
         placeholder="Pavadinimas"
         value={formData.name}
         onChange={handleChange}
       />
-      <input
-        name="location"
-        placeholder="Miestas / vieta"
-        value={formData.location}
-        onChange={handleChange}
-      />
+
+      {/* Aprašymas */}
       <textarea
         name="description"
         placeholder="Aprašymas"
         value={formData.description}
         onChange={handleChange}
       />
+
+      {/* Koordinatės */}
       <input
         name="latitude"
         type="number"
@@ -134,15 +148,20 @@ const EditDestination: React.FC = () => {
         value={formData.longitude}
         onChange={handleChange}
       />
+
+      {/* Šalies pasirinkimas (dropdown) */}
       <select name="country" value={formData.country} onChange={handleChange}>
         <option value="">Pasirink šalį</option>
         {countries.map((c) => (
-          <option key={c._id} value={c._id}>
+          <option key={c.name} value={c.name}>
             {c.name}
           </option>
         ))}
       </select>
+
       <br />
+
+      {/* Atnainti / ištrinti */}
       <button type="submit" style={{ marginRight: "10px" }}>
         Atnaujinti
       </button>

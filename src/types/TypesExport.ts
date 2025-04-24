@@ -26,3 +26,8 @@ export interface Destination {
   }
   description: string
 }
+
+export interface Category {
+  _id: string,
+  name: string
+}

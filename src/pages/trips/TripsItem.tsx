@@ -39,7 +39,7 @@ const TripsItem: React.FC = () => {
 
     return (
         <div>
-            <h1>{name} ({category?.name})</h1>
+            <h1>{name} ({category})</h1>
             <Link to={`/edit-trip/${id}`} >Edit</Link>
             <button onClick={() => deleteTrip(id ?? '')}>Delete</button>
 

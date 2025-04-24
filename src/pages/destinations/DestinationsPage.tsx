@@ -66,7 +66,7 @@ const DestinationsPage: React.FC = () => {
         ))}
       </ul>
 
-      {/* Navigacija tarp puslapių */}
+      {/* Navigacija tarp puspių */}
       <div style={{ marginTop: "1rem" }}>
         <button
           onClick={() => setPage((p) => Math.max(p - 1, 1))}

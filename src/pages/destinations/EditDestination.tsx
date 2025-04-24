@@ -161,7 +161,7 @@ const EditDestination: React.FC = () => {
 
       <br />
 
-      {/* Atnaujinti / ištrinti */}
+      {/* Atnainti / ištrinti */}
       <button type="submit" style={{ marginRight: "10px" }}>
         Atnaujinti
       </button>

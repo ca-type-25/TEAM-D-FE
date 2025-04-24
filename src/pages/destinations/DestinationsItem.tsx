@@ -11,7 +11,7 @@ interface Destination {
     latitude: number;
     longitude: number;
   };
-  country: string; // paprastas string, pvz. "Lithuania"
+  country: string; // paprastas string, pvz. "Lithua"
 }
 
 const DestinationItem: React.FC = () => {

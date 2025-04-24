@@ -88,7 +88,7 @@ const CreateDestination: React.FC = () => {
     <form onSubmit={handleSubmit}>
       <h1>Create New Destination</h1>
 
-      {/* Vieta, aprašymas ir koordinatės */}
+      {/* Vieta, aprašymas ir koords */}
       <input name="name" placeholder="Name" onChange={handleChange} />
       <input
         name="description"

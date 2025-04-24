@@ -21,7 +21,7 @@ useEffect(() => {
 }, [])
 
 if (!token) {
-    return <p>ss</p>
+    return <p>You have to be logged in to see your personal trips.</p>
 }
     return (
         <div>

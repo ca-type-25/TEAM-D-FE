@@ -24,6 +24,7 @@ import EditReview from "./pages/reviews/EditReview"
 import ProfilePage from "./pages/profile/ProfilePage"
 import LoginPage from "./pages/login/LoginPage"
 import RegisterPage from "./pages/register/RegisterPage"
+import MyTrips from "./pages/trips/MyTrips"
 
 function App() {
 
@@ -43,7 +44,8 @@ function App() {
           <Route path="trips" element={<TripsPage />} />
           <Route path="trips/:id" element={<TripsItem />} />
           <Route path="create-trip" element={<CreateTrip />} />
-          <Route path="edit-trip" element={<EditTrip />} />
+          <Route path="edit-trip/:id" element={<EditTrip />} />
+          <Route path="my-trips" element={<MyTrips />} />
 
 
           <Route path="destinations" element={<DestinationsPage />} />

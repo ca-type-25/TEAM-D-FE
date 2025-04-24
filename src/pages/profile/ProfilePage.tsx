@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const ProfilePage = () => {
   const [form, setForm] = useState({
@@ -105,6 +105,9 @@ const ProfilePage = () => {
       <div className="flex gap-4 mt-6">
         <button onClick={handleLogout} className="bg-gray-500 text-white p-2 rounded">Log out</button>
         <button onClick={handleDelete} className="bg-red-600 text-white p-2 rounded">Delete Account</button>
+      </div>
+      <div>
+        <Link to={'/my-trips'} >My trips</Link>
       </div>
     </div>
   )

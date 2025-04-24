@@ -11,6 +11,7 @@ const PageNavigator: React.FC = () => {
             <NavLink to={'/destinations'}>Destinations</NavLink>
             <NavLink to={'/activities'}>Activities</NavLink>
             <NavLink to={'/reviews'}>Reviews</NavLink>
+            <NavLink to={'/my-trips'}>My trips</NavLink>
             <NavLink to={'/login'}>Login</NavLink>
             <NavLink to={'/register'}>Register</NavLink>
             <NavLink to={'/user-profile'}>Profile</NavLink>

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export interface Trip {
     _id: string,
     name: string,
@@ -7,7 +6,7 @@ export interface Trip {
     category: string,
     destination: string[],
     user: string
-=======
+}
 
 export interface Activity {
   _id: string
@@ -26,5 +25,4 @@ export interface Destination {
     latitude: number
   }
   description: string
->>>>>>> 42a3f9ab3f8388712e4904f7aff400e42057ebfc
 }

@@ -13,7 +13,7 @@ const EditTrip: React.FC = () => {
         const fetchTrip = async () => {
             const res = await fetch(`${API_URL}/trips/${id}`)
             const data = await res.json()
-            setTrip(data)
+            setTrip(data.trip)
         }
         fetchTrip()
     }, [id])

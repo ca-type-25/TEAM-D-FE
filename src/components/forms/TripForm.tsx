@@ -3,6 +3,7 @@ import { API_URL } from "../../utils/config"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { Trip } from "../../types/TypesExport"
+import CATEGORIES from "../../config/categories"
 
 type TripFormProps = {
     editTripData?: Trip
@@ -11,7 +12,6 @@ type TripFormProps = {
 const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
     const navigate = useNavigate()
 
-    const [categories, setCategories] = useState([])
     const [selectedCategory, setSelectedCategory] = useState<string>('')
 
     const [destinations, setDestinations] = useState([])
@@ -22,19 +22,16 @@ const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
     const [price, setPrice] = useState<number>(0)
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            const res = await fetch(`${API_URL}/categories`)
-            const data = await res.json()
-            setCategories(data)
-        }
         const fetchDestinations = async () => {
             const res = await fetch(`${API_URL}/destinations`)
             const data = await res.json()
             setDestinations(data)
         }
         fetchDestinations()
-        fetchCategories()
     }, [])
+
+    console.log(destinations)
+
 
     const nameHandler = (event: React.ChangeEvent<HTMLInputElement>) => {setName(event.target.value)}
     const descriptionHandler = (event: React.ChangeEvent<HTMLInputElement>) => {setDescription(event.target.value)}
@@ -45,7 +42,7 @@ const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
         if (checked) {
             setSelectedDestinations((prevState) => [...prevState, value])
         } else {
-            setSelectedDestinations((prevState) => prevState.filter((language) => language !== value))
+            setSelectedDestinations((prevState) => prevState.filter((destination) => destination !== value))
         }
     }
 
@@ -54,12 +51,12 @@ const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
             setName(editTripData.name)
             setDescription(editTripData.description)
             setPrice(editTripData.price)
-            setSelectedCategory(editTripData.category?._id || editTripData.category)
+            setSelectedCategory(editTripData.category)
             setSelectedDestinations(editTripData.destination.map(destination => destination._id || destination))
         }
     }, [editTripData])
 
-
+console.log(editTripData)
     const formHandler = (event: React.FormEvent) => {
         event.preventDefault()
 
@@ -108,8 +105,8 @@ const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
                 <div className="formControl">
                     <select name="category" id="category" onChange={categoryHandler} value={selectedCategory}>
                     <option value="">Select a category</option>
-                    {categories.map(category => (
-                        <option key={category._id} value={category._id}>{category.name}</option>
+                    {Object.values(CATEGORIES).map((category) => (  
+                        <option key={category} value={category}>{category}</option>
                     ))}
                     </select>
                 </div>

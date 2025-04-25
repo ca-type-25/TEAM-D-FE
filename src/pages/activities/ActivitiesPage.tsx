@@ -37,11 +37,6 @@ const ActivitiesPage: React.FC = () => {
   }
 
 
-  if (activities.length === 0) {
-    return <div>No activities found</div>
-  }
-
-
   return (
     <div>
       <h1>Activities Page</h1>

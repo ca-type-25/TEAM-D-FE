@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { User } from '../../types/TypesExport'
 
 const ProfilePage = () => {
-  const [form, setForm] = useState({
-    name: '', surname: '', age: '', nationality: '', email: ''
+  const [form, setForm] = useState<User>({
+    name: '', surname: '', age: 0, nationality: '', email: ''
   })
   const [editMode, setEditMode] = useState(false)
   const navigate = useNavigate()

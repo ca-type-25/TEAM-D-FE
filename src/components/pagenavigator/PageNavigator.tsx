@@ -1,21 +1,40 @@
 import { NavLink } from "react-router-dom"
+import Button from "@mui/material/Button"
 import './PageNavigator.css'
 
 const PageNavigator: React.FC = () => {
-
     return (
         <div className="pageNavigators">
-            <NavLink to={'/'}>Home</NavLink>
-            <NavLink to={'/trips'}>Trips</NavLink>
-            <NavLink to={'/countries'}>Countries</NavLink>
-            <NavLink to={'/destinations'}>Destinations</NavLink>
-            <NavLink to={'/activities'}>Activities</NavLink>
-            <NavLink to={'/reviews'}>Reviews</NavLink>
-            <NavLink to={'/my-trips'}>My trips</NavLink>
-            <NavLink to={'/login'}>Login</NavLink>
-            <NavLink to={'/register'}>Register</NavLink>
-            <NavLink to={'/user-profile'}>Profile</NavLink>
-
+            <NavLink to={'/'}>
+                <Button variant="text" color="primary">Home</Button>
+            </NavLink>
+            <NavLink to={'/trips'}>
+                <Button variant="text" color="primary">Trips</Button>
+            </NavLink>
+            <NavLink to={'/countries'}>
+                <Button variant="text" color="primary">Countries</Button>
+            </NavLink>
+            <NavLink to={'/destinations'}>
+                <Button variant="text" color="primary">Destinations</Button>
+            </NavLink>
+            <NavLink to={'/activities'}>
+                <Button variant="text" color="primary">Activities</Button>
+            </NavLink>
+            <NavLink to={'/reviews'}>
+                <Button variant="text" color="primary">Reviews</Button>
+            </NavLink>
+            <NavLink to={'/my-trips'}>
+                <Button variant="text" color="primary">My trips</Button>
+            </NavLink>
+            <NavLink to={'/login'}>
+                <Button variant="text" color="primary">Login</Button>
+            </NavLink>
+            <NavLink to={'/register'}>
+                <Button variant="text" color="primary">Register</Button>
+            </NavLink>
+            <NavLink to={'/user-profile'}>
+                <Button variant="text" color="primary">Profile</Button>
+            </NavLink>
         </div>
     )
 }

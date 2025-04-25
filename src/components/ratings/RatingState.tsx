@@ -12,15 +12,16 @@ const RatingStats = ({ reviews }: Props) => {
       <h2 className="text-xl font-semibold">Average Rating</h2>
       <div className="text-2xl font-bold">{average} ⭐ ({total} reviews)</div>
 
-      <div className="space-y-1">
+      <div className="space-y-2">
         {Object.entries(distribution).reverse().map(([stars, count]) => (
           <div key={stars} className="flex items-center gap-2">
             <span className="w-12">{stars}⭐</span>
-            <progress
-              value={count}
-              max={total}
-              className="flex-1 appearance-none h-3 [&::-webkit-progress-bar]:bg-gray-100 [&::-webkit-progress-value]:bg-yellow-400"
-            />
+            <div className="w-full bg-gray-100 h-3 rounded">
+              <div
+                className="bg-yellow-400 h-3 rounded"
+                style={{ width: `${(count / total) * 100}%` }}
+              ></div>
+            </div>
             <span className="w-8 text-right">{count}</span>
           </div>
         ))}

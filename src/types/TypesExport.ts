@@ -31,3 +31,11 @@ export interface Category {
   _id: string,
   name: string
 }
+
+export type User = {
+  name: string
+  surname: string
+  age: number
+  nationality: string
+  email: string
+}

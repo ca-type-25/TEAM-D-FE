@@ -1,3 +1,4 @@
+import { Button, Container, Typography, Box } from '@mui/material'
 import LoginForm from '../../components/forms/LoginForm'
 import RegisterLink from '../../components/links/RegisterLink'
 import { useNavigate } from 'react-router-dom'
@@ -11,20 +12,28 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl mb-4">Login</h1>
-      <LoginForm />
-      <div className="mt-4">
+    <Container maxWidth="sm" sx={{ mt: 10 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Login
+      </Typography>
+
+      <Box sx={{ mb: 4 }}>
+        <LoginForm />
+      </Box>
+
+      <Box sx={{ mb: 4 }}>
         <RegisterLink />
-      </div>
-      <div className="mt-6">
-        <button onClick={handleLogout} className="bg-red-500 text-white p-2 rounded">
-          Log out
-        </button>
-      </div>
-    </div>
+      </Box>
+
+      <Button 
+        variant="contained" 
+        color="error" 
+        onClick={handleLogout}
+      >
+        Log out
+      </Button>
+    </Container>
   )
 }
-
 
 export default LoginPage

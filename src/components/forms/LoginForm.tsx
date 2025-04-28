@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TextField, Button, Box } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
@@ -28,25 +29,27 @@ const LoginForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <input
+    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <TextField
         type="email"
-        placeholder="Email"
+        label="Email"
         value={email}
         onChange={e => setEmail(e.target.value)}
         required
-        className="border p-2 rounded"
+        fullWidth
       />
-      <input
+      <TextField
         type="password"
-        placeholder="Password"
+        label="Password"
         value={password}
         onChange={e => setPassword(e.target.value)}
         required
-        className="border p-2 rounded"
+        fullWidth
       />
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">Login</button>
-    </form>
+      <Button type="submit" variant="contained" color="primary">
+        Login
+      </Button>
+    </Box>
   )
 }
 

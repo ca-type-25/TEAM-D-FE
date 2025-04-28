@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Box, Button, TextField } from '@mui/material'
+
 
 const RegisterForm = () => {
   const [form, setForm] = useState({
@@ -30,21 +32,23 @@ const RegisterForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       {Object.entries(form).map(([key, val]) => (
-        <input
+        <TextField
           key={key}
-          type={key === 'password' ? 'password' : 'text'}
+          type={key === 'password' ? 'password' : key === 'age' ? 'number' : 'text'}
           name={key}
           value={val}
           onChange={handleChange}
-          placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+          label={key.charAt(0).toUpperCase() + key.slice(1)}
           required
-          className="border p-2 rounded"
+          fullWidth
         />
       ))}
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded">Register</button>
-    </form>
+      <Button type="submit" variant="contained" color="primary">
+        Register
+      </Button>
+    </Box>
   )
 }
 

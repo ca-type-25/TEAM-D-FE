@@ -11,9 +11,6 @@ const PageNavigator: React.FC = () => {
             <NavLink to={'/trips'}>
                 <Button variant="text" color="primary">Trips</Button>
             </NavLink>
-            <NavLink to={'/countries'}>
-                <Button variant="text" color="primary">Countries</Button>
-            </NavLink>
             <NavLink to={'/destinations'}>
                 <Button variant="text" color="primary">Destinations</Button>
             </NavLink>

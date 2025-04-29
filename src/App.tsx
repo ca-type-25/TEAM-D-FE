@@ -54,12 +54,6 @@ function App() {
           <Route path="edit-destination" element={<EditDestination />} />
 
 
-          <Route path="countries" element={<CountriesPage />} />
-          <Route path="countries/:id" element={<CountriesItem />} />
-          <Route path="create-country" element={<CreateCountry />} />
-          <Route path="edit-country" element={<EditCountry />} />
-
-
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="activities/:id" element={<ActivitiesItem />} />
           <Route path="create-activity" element={<CreateActivity />} />

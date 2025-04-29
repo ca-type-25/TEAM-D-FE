@@ -3,9 +3,9 @@ import TripsForm from "../../components/forms/TripForm"
 import { useEffect, useState } from "react"
 import { Trip } from "../../types/TypesExport"
 import { API_URL } from "../../utils/config"
+import { Box, Typography } from "@mui/material"
 
 const EditTrip: React.FC = () => {
-
     const { id } = useParams()
     const [trip, setTrip] = useState<Trip>()
 
@@ -19,14 +19,16 @@ const EditTrip: React.FC = () => {
     }, [id])
 
     if (!trip) {
-        return <p>Loading...</p>
+        return <Typography>Loading...</Typography>
     }
 
     return (
-        <div>
-            <h1>Edit</h1>
+        <Box sx={{ padding: 4 }}>
+            <Typography variant="h4" gutterBottom>
+                Edit Trip
+            </Typography>
             <TripsForm editTripData={trip} />
-        </div>
+        </Box>
     )
 }
 export default EditTrip

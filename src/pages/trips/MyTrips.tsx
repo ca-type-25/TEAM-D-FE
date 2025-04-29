@@ -2,47 +2,79 @@ import { useEffect, useState } from "react"
 import { API_URL } from "../../utils/config"
 import { Link } from "react-router-dom"
 
+import {
+    Box,
+    Typography,
+    List,
+    ListItem,
+    ListItemText,
+    Paper,
+    Button,
+} from "@mui/material"
+
 const MyTrips: React.FC = () => {
     const [myTrips, setMyTrips] = useState([])
+    const token = localStorage.getItem("token")
 
-    const token = localStorage.getItem('token')
+    useEffect(() => {
+        if (!token) return
 
-useEffect(() => {
-    const fetchMyTrips = async () => {
-        const res = await fetch(`${API_URL}/trips/my-trips`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-        const data = await res.json()
-        setMyTrips(data)
+        const fetchMyTrips = async () => {
+            const res = await fetch(`${API_URL}/trips/my-trips`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            const data = await res.json()
+            setMyTrips(data)
+        }
+        fetchMyTrips()
+    }, [token])
+
+    if (!token) {
+        return (
+            <Box sx={{ padding: 4 }}>
+                <Typography variant="h6" color="error">
+                    You have to be logged in to see your personal trips.
+                </Typography>
+            </Box>
+        )
     }
-    fetchMyTrips()
-}, [])
 
-if (!token) {
-    return <p>You have to be logged in to see your personal trips.</p>
-}
     return (
-        <div>
+        <Box sx={{ padding: 4 }}>
             {myTrips && myTrips.length > 0 ? (
-                <div>
-                    <h1>{myTrips.length > 1 ? 'My trips:' : 'My trip:'}</h1>
-                    <ul>
-                        {myTrips.map((trip, index) => (
-                            <li key={index}>
-                                <Link to={`/trips/${trip._id}`}>{trip.name}</Link> 
-                            </li>
+                <Paper elevation={3} sx={{ padding: 3, marginBottom: 4 }}>
+                    <Typography variant="h4" gutterBottom>
+                        {myTrips.length > 1 ? "My Trips:" : "My Trip:"}
+                    </Typography>
+                    <List>
+                        {myTrips.map((trip) => (
+                            <ListItem
+                                key={trip._id}
+                                component={Link}
+                                to={`/trips/${trip._id}`}
+                                button
+                            >
+                                <ListItemText primary={trip.name} />
+                            </ListItem>
                         ))}
-                    </ul>
-                </div>
+                    </List>
+                </Paper>
             ) : (
-                <h1>No trips yet...</h1>
+                <Typography variant="h5">No trips yet...</Typography>
             )}
 
-            <Link to={'/create-trip'}>Create trip</Link>
-
-        </div>
+            <Button
+                component={Link}
+                to="/create-trip"
+                variant="contained"
+                color="primary"
+            >
+                Create Trip
+            </Button>
+        </Box>
     )
 }
+
 export default MyTrips

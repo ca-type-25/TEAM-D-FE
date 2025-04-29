@@ -5,20 +5,32 @@ import { useNavigate } from "react-router-dom"
 import { Trip } from "../../types/TypesExport"
 import CATEGORIES from "../../config/categories"
 
+import {
+    Box,
+    Button,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography,
+} from "@mui/material"
+
 type TripFormProps = {
     editTripData?: Trip
 }
 
-const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
+const TripsForm: React.FC<TripFormProps> = ({ editTripData }) => {
     const navigate = useNavigate()
 
-    const [selectedCategory, setSelectedCategory] = useState<string>('')
-
-    const [destinations, setDestinations] = useState([])
-    const [selectedDestinations, setSelectedDestinations] = useState([])
-
-    const [name, setName] = useState<string>('')
-    const [description, setDescription] = useState<string>('')
+    const [selectedCategory, setSelectedCategory] = useState<string>("")
+    const [destinations, setDestinations] = useState<any[]>([])
+    const [selectedDestinations, setSelectedDestinations] = useState<string[]>([])
+    const [name, setName] = useState<string>("")
+    const [description, setDescription] = useState<string>("")
     const [price, setPrice] = useState<number>(0)
 
     useEffect(() => {
@@ -30,34 +42,19 @@ const TripsForm: React.FC<TripFormProps> = ( {editTripData} ) => {
         fetchDestinations()
     }, [])
 
-    console.log(destinations)
-
-
-    const nameHandler = (event: React.ChangeEvent<HTMLInputElement>) => {setName(event.target.value)}
-    const descriptionHandler = (event: React.ChangeEvent<HTMLInputElement>) => {setDescription(event.target.value)}
-    const priceHandler = (event: React.ChangeEvent<HTMLInputElement>) => {setPrice(event.target.value)}
-    const categoryHandler = (event: React.ChangeEvent<HTMLSelectElement>) => {setSelectedCategory(event.target.value)}
-    const destinationHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value, checked } = event.target
-        if (checked) {
-            setSelectedDestinations((prevState) => [...prevState, value])
-        } else {
-            setSelectedDestinations((prevState) => prevState.filter((destination) => destination !== value))
-        }
-    }
-
     useEffect(() => {
         if (editTripData) {
             setName(editTripData.name)
             setDescription(editTripData.description)
             setPrice(editTripData.price)
             setSelectedCategory(editTripData.category)
-            setSelectedDestinations(editTripData.destination.map(destination => destination._id || destination))
+            setSelectedDestinations(
+                editTripData.destination.map((d) => d._id || d)
+            )
         }
     }, [editTripData])
 
-console.log(editTripData)
-    const formHandler = (event: React.FormEvent) => {
+    const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault()
 
         const newTrip = {
@@ -65,67 +62,103 @@ console.log(editTripData)
             description,
             price,
             category: selectedCategory,
-            destination: selectedDestinations
+            destination: selectedDestinations,
         }
 
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem("token")
 
         if (editTripData) {
             axios.put(`${API_URL}/trips/${editTripData._id}`, newTrip, {
                 headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             })
             navigate(`/trips`)
         } else {
             axios.post(`${API_URL}/trips`, newTrip, {
                 headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             })
             navigate(`/trips`)
         }
     }
 
     return (
-        <>
-            <form onSubmit={formHandler}>
-                <div className="formControl">
-                    <label htmlFor="name">Name:</label>
-                    <input type="text" name="name" id="name" value={name} onChange={nameHandler} />
-                </div>
-                <div className="formControl">
-                    <label htmlFor="description">Description:</label>
-                    <input type="text" name="description" id="description" value={description} onChange={descriptionHandler} />
-                </div>
-                <div className="formControl">
-                    <label htmlFor="price">Price:</label>
-                    <input type="number" name="price" id="price" value={price} onChange={priceHandler} />
-                </div>
-                <div className="formControl">
-                    <select name="category" id="category" onChange={categoryHandler} value={selectedCategory}>
-                    <option value="">Select a category</option>
-                    {Object.values(CATEGORIES).map((category) => (  
-                        <option key={category} value={category}>{category}</option>
-                    ))}
-                    </select>
-                </div>
-                <div className="formControl">
-                    <label htmlFor="destinations">Select your destination (-s): </label> <br />
-                    {destinations.map(destination => (
-                        <div key={destination._id}>
-                            <input type="checkbox" value={destination._id} id={destination._id} checked={selectedDestinations.includes(destination._id)} onChange={destinationHandler} />
-                            <label htmlFor={destination._id}>{destination.name}</label>
-                        </div>
-                    ))}
-                </div>
-            
-            
-            
-                <button type="submit">{editTripData ? 'Edit' : 'Create'}</button>
-            </form>
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 500 }}>
+            <TextField
+                label="Trip Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+            />
 
-        </>
+            <TextField
+                label="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+            />
+
+            <TextField
+                type="number"
+                label="Price (€)"
+                value={price}
+                onChange={(e) => setPrice(Number(e.target.value))}
+                required
+            />
+
+            <FormControl fullWidth required>
+                <InputLabel id="category-label">Category</InputLabel>
+                <Select
+                    labelId="category-label"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    label="Category"
+                >
+                    {Object.values(CATEGORIES).map((category) => (
+                        <MenuItem key={category} value={category}>
+                            {category}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
+            <Box>
+                <Typography variant="subtitle1" gutterBottom>
+                    Select Destinations
+                </Typography>
+                <FormGroup>
+                    {destinations.map((destination) => (
+                        <FormControlLabel
+                            key={destination._id}
+                            control={
+                                <Checkbox
+                                    value={destination._id}
+                                    checked={selectedDestinations.includes(destination._id)}
+                                    onChange={(e) => {
+                                        const { value, checked } = e.target
+                                        if (checked) {
+                                            setSelectedDestinations((prev) => [...prev, value])
+                                        } else {
+                                            setSelectedDestinations((prev) =>
+                                                prev.filter((d) => d !== value)
+                                            )
+                                        }
+                                    }}
+                                />
+                            }
+                            label={destination.name}
+                        />
+                    ))}
+                </FormGroup>
+            </Box>
+
+            <Button variant="contained" type="submit">
+                {editTripData ? "Save Changes" : "Create Trip"}
+            </Button>
+        </Box>
     )
 }
+
 export default TripsForm

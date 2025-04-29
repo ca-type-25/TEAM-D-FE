@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import {
+  Container,
+  Typography,
+  Button,
+  TextField,
+  Box,
+  Paper
+} from '@mui/material'
 import { User } from '../../types/TypesExport'
 import { useAuth } from '../../AuthContext'
 
@@ -8,6 +16,7 @@ const ProfilePage = () => {
     name: '', surname: '', age: 0, nationality: '', email: ''
   })
   const [editMode, setEditMode] = useState(false)
+  const [notLoggedIn, setNotLoggedIn] = useState(false)
   const navigate = useNavigate()
   const { logoutUser } = useAuth()
 
@@ -15,16 +24,37 @@ const ProfilePage = () => {
   const token = localStorage.getItem('token')
 
   useEffect(() => {
+    if (!userId) {
+      setNotLoggedIn(true)
+      return
+    }
+
     const fetchUser = async () => {
       const res = await fetch(`http://localhost:3000/api/users/${userId}`)
       const data = await res.json()
-
       delete data._id
       setForm(data)
     }
 
-    if (userId) fetchUser()
+    fetchUser()
   }, [userId])
+
+  if (notLoggedIn) {
+    return (
+      <Container maxWidth="sm">
+        <Paper elevation={3} sx={{ p: 4, mt: 6, textAlign: 'center' }}>
+          <Typography variant="h5" color="error">⚠️ Need to login</Typography>
+          <Button
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={() => navigate('/login')}
+          >
+            Go to Login
+          </Button>
+        </Paper>
+      </Container>
+    )
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -72,46 +102,71 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl mb-4">User Settings</h1>
+    <Container maxWidth="sm">
+      <Paper elevation={3} sx={{ p: 4, mt: 6 }}>
+        <Typography variant="h4" gutterBottom>User Settings</Typography>
 
-      {!editMode ? (
-        <div className="flex flex-col gap-2">
-          <p><strong>Name:</strong> {form.name}</p>
-          <p><strong>Surname:</strong> {form.surname}</p>
-          <p><strong>Age:</strong> {form.age}</p>
-          <p><strong>Nationality:</strong> {form.nationality}</p>
-          <p><strong>Email:</strong> {form.email}</p>
+        {!editMode ? (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Typography><strong>Name:</strong> {form.name}</Typography>
+            <Typography><strong>Surname:</strong> {form.surname}</Typography>
+            <Typography><strong>Age:</strong> {form.age}</Typography>
+            <Typography><strong>Nationality:</strong> {form.nationality}</Typography>
+            <Typography><strong>Email:</strong> {form.email}</Typography>
 
-          <button onClick={() => setEditMode(true)} className="mt-4 bg-blue-500 text-white p-2 rounded">
-            Edit Info
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {Object.entries(form).map(([key, val]) => (
-            <input
-              key={key}
-              type="text"
-              name={key}
-              value={val}
-              onChange={handleChange}
-              placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-              className="border p-2 rounded"
-            />
-          ))}
-          <button type="submit" className="bg-green-500 text-white p-2 rounded">Update</button>
-        </form>
-      )}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setEditMode(true)}
+              sx={{ mt: 2 }}
+            >
+              Edit Info
+            </Button>
+          </Box>
+        ) : (
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}
+          >
+            {Object.entries(form).map(([key, val]) => (
+              <TextField
+                key={key}
+                type="text"
+                name={key}
+                value={val}
+                onChange={handleChange}
+                label={key.charAt(0).toUpperCase() + key.slice(1)}
+                fullWidth
+              />
+            ))}
+            <Button type="submit" variant="contained" color="success">
+              Update
+            </Button>
+          </Box>
+        )}
 
-      <div className="flex gap-4 mt-6">
-        <button onClick={handleLogout} className="bg-gray-500 text-white p-2 rounded">Log out</button>
-        <button onClick={handleDelete} className="bg-red-600 text-white p-2 rounded">Delete Account</button>
-      </div>
-      <div>
-        <Link to={'/my-trips'} >My trips</Link>
-      </div>
-    </div>
+        <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
+          <Button onClick={handleLogout} variant="contained" color="secondary" fullWidth>
+            Log out
+          </Button>
+          <Button onClick={handleDelete} variant="contained" color="error" fullWidth>
+            Delete Account
+          </Button>
+        </Box>
+
+        <Box sx={{ mt: 3 }}>
+          <Button
+            component={RouterLink}
+            to="/my-trips"
+            variant="outlined"
+            fullWidth
+          >
+            My Trips
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   )
 }
 

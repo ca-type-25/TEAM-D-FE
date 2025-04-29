@@ -4,6 +4,17 @@ import { Activity, Trip } from "../../types/TypesExport"
 import { API_URL } from "../../utils/config"
 import axios from "axios"
 
+import {
+    Box,
+    Typography,
+    Button,
+    Paper,
+    Divider,
+    List,
+    ListItem,
+    ListItemText,
+} from "@mui/material"
+
 const TripsItem: React.FC = () => {
     const navigate = useNavigate()
     const { id } = useParams()
@@ -28,63 +39,89 @@ const TripsItem: React.FC = () => {
                 navigate(`/my-trips`)
             }
         } catch (error) {
-            console.error('Error deleting trip:', error)
-            alert('There was an error deleting the trip. Please try again.')
+            console.error("Error deleting trip:", error)
+            alert("There was an error deleting the trip. Please try again.")
         }
     }
 
     if (!trip) {
-        return <p>Loading...</p>
+        return <Typography>Loading...</Typography>
     }
 
     return (
-        <div>
-            <h1>{name} ({category})</h1>
-            <Link to={`/edit-trip/${id}`} >Edit</Link>
-            <button onClick={() => deleteTrip(id ?? '')}>Delete</button>
+        <Box sx={{ padding: 4 }}>
+            <Paper elevation={3} sx={{ padding: 3, marginBottom: 4 }}>
+                <Typography variant="h4" gutterBottom>
+                    {name}
+                </Typography>
 
-            <p>Description: {description}</p>
-            <p>Price: {price} EUR.</p>
+                <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
+                    <Button
+                        component={Link}
+                        to={`/edit-trip/${id}`}
+                        variant="outlined"
+                        color="primary"
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => deleteTrip(id ?? "")}
+                    >
+                        Delete
+                    </Button>
+                </Box>
 
-
+                <Typography>Description: {description}</Typography>
+                <Typography sx={{ marginTop: 1 }}>Price: {price} EUR</Typography>
+            </Paper>
 
             {destination && destination.length > 0 ? (
-        <div>
-            <h2>{destination.length > 1 ? 'Destinations:' : 'Destination:'}</h2>
-            <div>
-                {destination.map((dest, index) => (
-                    <div key={index}>
-                        <h3>
-                            <Link to={`/destinations/${dest._id}`}>
-                                {dest.name}
-                            </Link>
-                        </h3>
+                <Box>
+                    <Typography variant="h5" gutterBottom>
+                        {destination.length > 1 ? "Destinations:" : "Destination:"}
+                    </Typography>
 
-                        {activities && activities.length > 0 ? (
-                            <div>
-                                <h6>Activities:</h6>
-                                <ul>
-                                    {activities.filter((activity) => activity.destinationIds.includes(dest._id))
-                                        .map((activity) => (
-                                            <li key={activity._id}>
-                                                <Link to={`/activities/${activity._id}`}>
-                                                    {activity.name}
-                                                </Link>
-                                            </li>
-                                        ))}
-                                </ul>
-                            </div>
-                        ) : (
-                            <p>No activities for this destination</p>
-                        )}
-                    </div>
-                ))}
-            </div>
-        </div>
-    ) : (
-        <p>No destinations added</p>
-    )}
-        </div>
+                    {destination.map((dest, index) => (
+                        <Paper key={index} sx={{ padding: 2, marginBottom: 3 }}>
+                            <Typography variant="h6" component={Link} to={`/destinations/${dest._id}`} sx={{ textDecoration: 'none', color: 'primary.main' }}>
+                                {dest.name}
+                            </Typography>
+
+                            <Divider sx={{ marginY: 1 }} />
+
+                            {activities && activities.length > 0 ? (
+                                <Box>
+                                    <Typography variant="subtitle2">Activities:</Typography>
+                                    <List dense>
+                                        {activities
+                                            .filter((activity) =>
+                                                activity.destinationIds.includes(dest._id)
+                                            )
+                                            .map((activity) => (
+                                                <ListItem
+                                                    key={activity._id}
+                                                    component={Link}
+                                                    to={`/activities/${activity._id}`}
+                                                    button
+                                                >
+                                                    <ListItemText primary={activity.name} />
+                                                </ListItem>
+                                            ))}
+                                    </List>
+                                </Box>
+                            ) : (
+                                <Typography>No activities for this destination</Typography>
+                            )}
+                        </Paper>
+                    ))}
+                </Box>
+            ) : (
+                <Typography>No destinations added</Typography>
+            )}
+        </Box>
     )
 }
+
 export default TripsItem

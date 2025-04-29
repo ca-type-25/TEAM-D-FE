@@ -22,9 +22,9 @@ const PageNavigator: React.FC = () => {
             <NavLink to={'/activities'}>
                 <Button variant="text" color="primary">Activities</Button>
             </NavLink>
-            <NavLink to={'/reviews'}>
+            {/* <NavLink to={'/reviews'}>
                 <Button variant="text" color="primary">Reviews</Button>
-            </NavLink>
+            </NavLink> */}
 
             {user ? (
                 <>

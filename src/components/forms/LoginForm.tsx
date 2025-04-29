@@ -20,7 +20,7 @@ const LoginForm = () => {
 
       if (token) {
           loginUser(token)
-          navigate('/dashboard/profile')
+          navigate('/user-profile')
       }
 
   } catch (error) {

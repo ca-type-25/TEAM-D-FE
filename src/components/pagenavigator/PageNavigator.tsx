@@ -46,12 +46,6 @@ const PageNavigator: React.FC = () => {
                 </NavLink>
                 </>
             )}
-
-            {user && (
-                <NavLink to={'/user-profile'}>
-                <Button variant="text" color="primary">Profile</Button>
-            </NavLink>
-            )}
         </div>
     )
 }

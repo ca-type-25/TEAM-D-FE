@@ -12,9 +12,11 @@ import {
     Button,
     Paper,
 } from "@mui/material"
+import { useAuth } from "../../AuthContext"
 
 const TripsPage: React.FC = () => {
     const [trips, setTrips] = useState<Trip[]>([])
+    const { user } = useAuth()
 
     useEffect(() => {
         const fetchTrips = async () => {
@@ -38,7 +40,6 @@ const TripsPage: React.FC = () => {
                                 key={trip._id}
                                 component={Link}
                                 to={`/trips/${trip._id}`}
-                                button
                             >
                                 <ListItemText
                                     primary={trip.name}
@@ -52,6 +53,7 @@ const TripsPage: React.FC = () => {
                 <Typography variant="h5">No trips yet...</Typography>
             )}
 
+        {user && (
             <Box sx={{ marginTop: 4 }}>
                 <Button
                     component={Link}
@@ -62,6 +64,7 @@ const TripsPage: React.FC = () => {
                     Create trip!
                 </Button>
             </Box>
+        )}
         </Box>
     )
 }

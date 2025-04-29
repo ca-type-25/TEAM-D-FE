@@ -14,13 +14,16 @@ import {
     ListItem,
     ListItemText,
 } from "@mui/material"
+import { useAuth } from "../../AuthContext"
+import API from "../../utils/api"
 
 const TripsItem: React.FC = () => {
     const navigate = useNavigate()
     const { id } = useParams()
     const [trip, setTrip] = useState<Trip | undefined>(undefined)
     const [activities, setActivities] = useState<Activity[]>([])
-    const { user, category, destination, name, price, description } = trip || {}
+    const { category, destination, name, price, description } = trip || {}
+    const { user } = useAuth()
 
     useEffect(() => {
         const fetchTripData = async () => {
@@ -31,10 +34,9 @@ const TripsItem: React.FC = () => {
         }
         fetchTripData()
     }, [id])
-
     const deleteTrip = async (id: string) => {
         try {
-            const response = await axios.delete(`${API_URL}/trips/${id}`)
+            const response = await API.delete(`${API_URL}/trips/${id}`)
             if (response.status === 200) {
                 navigate(`/my-trips`)
             }
@@ -48,12 +50,14 @@ const TripsItem: React.FC = () => {
         return <Typography>Loading...</Typography>
     }
 
+
     return (
         <Box sx={{ padding: 4 }}>
             <Paper elevation={3} sx={{ padding: 3, marginBottom: 4 }}>
                 <Typography variant="h4" gutterBottom>
-                    {name}
+                    {name} ({category} trip)
                 </Typography>
+            {user && user.id === trip.user._id && (
 
                 <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
                     <Button
@@ -72,6 +76,8 @@ const TripsItem: React.FC = () => {
                         Delete
                     </Button>
                 </Box>
+
+            )}
 
                 <Typography>Description: {description}</Typography>
                 <Typography sx={{ marginTop: 1 }}>Price: {price} EUR</Typography>

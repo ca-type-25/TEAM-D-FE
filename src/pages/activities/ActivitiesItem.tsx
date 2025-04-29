@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
-import axios from "axios"
+
 
 import { Activity } from "../../types/TypesExport"
 import { API_URL } from "../../utils/config"
+import API from "../../utils/api"
 
 const ActivityPage: React.FC = () => {
   const [activity, setActivity] = useState<Activity | null>(null)
@@ -16,7 +17,7 @@ const ActivityPage: React.FC = () => {
   useEffect(() => {
     const fetchActivity = async () => {
       try {
-        const response = await axios.get<Activity>(`${API_URL}/activities/${id}`)
+        const response = await API.get<Activity>(`${API_URL}/activities/${id}`)
         setActivity(response.data);
       } catch (err) {
         setError("An error occurred while fetching the activity.")
@@ -36,7 +37,7 @@ const ActivityPage: React.FC = () => {
     }
 
     try {
-      await axios.delete(`${API_URL}/activities/${id}`)
+      await API.delete(`${API_URL}/activities/${id}`)
       navigate("/activities")
     } catch (error) {
       console.error("Error deleting activity:", error)

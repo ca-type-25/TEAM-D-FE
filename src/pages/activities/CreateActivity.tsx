@@ -1,49 +1,65 @@
-import React, { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
-import { API_URL } from "../../utils/config"
-import { Destination } from "../../types/TypesExport"
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../../utils/config";
+import { Destination } from "../../types/TypesExport";
+
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextareaAutosize,
+  CircularProgress,
+  Alert,
+  SelectChangeEvent, 
+} from "@mui/material";
+
+const darkGreen = "#2E7D32";
 
 const ActivityCreatePage: React.FC = () => {
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
     price: 0,
     description: "",
-    destinationId: "", 
-  })
+    destinationId: "",
+  });
 
-
-  const [destinations, setDestinations] = useState<Destination[]>([])
-  const [loadingDestinations, setLoadingDestinations] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [loadingDestinations, setLoadingDestinations] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
-        const response = await axios.get(`${API_URL}/destinations`)
-        setDestinations(response.data)
+        const response = await axios.get(`${API_URL}/destinations`);
+        setDestinations(response.data);
       } catch (err) {
-        setError("An error occurred while fetching destinations.")
-        console.error(err)
+        setError("An error occurred while fetching destinations.");
+        console.error(err);
       } finally {
-        setLoadingDestinations(false)
+        setLoadingDestinations(false);
       }
-    }
+    };
 
-    fetchDestinations()
-  }, [])
-
+    fetchDestinations();
+  }, []);
 
   const handleChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    event:
+      | SelectChangeEvent<string>
+      | React.ChangeEvent<HTMLInputElement 
+      | HTMLTextAreaElement>
   ) => {
-    const { name, value } = event.target
-
-    const newValue = name === "price" ? Number(value) : value
+    const { name, value } = event.target;
+    const newValue = name === "price" ? Number(value) : value;
 
     setFormData((prevState) => ({
       ...prevState,
@@ -51,93 +67,138 @@ const ActivityCreatePage: React.FC = () => {
     }));
   };
 
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+    event.preventDefault();
     try {
-
       await axios.post(`${API_URL}/activities`, {
         ...formData,
-        destinationIds: [formData.destinationId], 
-      })
-      navigate("/activities")
+        destinationIds: [formData.destinationId],
+      });
+      navigate("/activities");
     } catch (error) {
-      console.error("Error creating activity:", error)
+      setError("Error creating activity. Please try again.");
+      console.error("Error creating activity:", error);
     }
-  }
+  };
 
   return (
-    <div>
-      <h1>Create Activity</h1>
+    <Container maxWidth="md" sx={{ py: 5 }}>
 
-      {error && <div style={{ color: "red" }}>Error: {error}</div>}
+      <Typography variant="h4" gutterBottom fontWeight="bold" color={darkGreen}>
+        Create Activity
+      </Typography>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
 
       {loadingDestinations ? (
-        <div>Loading destinations...</div>
+        <Box display="flex" justifyContent="center" my={5}>
+          <CircularProgress color="primary" />
+        </Box>
       ) : (
-        <form onSubmit={handleSubmit}>
-          <div className="formControl">
-            <label htmlFor="name">Name:</label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+        >
 
-          <div className="formControl">
-            <label htmlFor="price">Price:</label>
-            <input
-              type="number"
-              name="price"
-              id="price"
-              value={formData.price}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <TextField
+            label="Activity Name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            variant="outlined"
+            fullWidth
+          />
 
-          <div className="formControl">
-            <label htmlFor="description">Description:</label>
-            <textarea
-              name="description"
+          <TextField
+            label="Price (EUR)"
+            name="price"
+            type="number"
+            value={formData.price}
+            onChange={handleChange}
+            required
+            variant="outlined"
+            fullWidth
+          />
+
+          <FormControl fullWidth>
+            <InputLabel shrink htmlFor="description" sx={{ bgcolor: "white", px: 1 }}>
+              Description
+            </InputLabel>
+            <TextareaAutosize
               id="description"
+              name="description"
+              minRows={4}
               value={formData.description}
               onChange={handleChange}
               required
+              style={{
+                width: "100%",
+                padding: "10px",
+                fontSize: "1rem",
+                borderRadius: "4px",
+                border: "1px solid rgba(0, 0, 0, 0.23)",
+              }}
             />
-          </div>
+          </FormControl>
 
-
-          <div className="formControl">
-            <label htmlFor="destinationId">Destination:</label>
-            <select
+          <FormControl fullWidth required>
+            <InputLabel id="destination-label">Destination</InputLabel>
+            <Select
+              labelId="destination-label"
               name="destinationId"
-              id="destinationId"
               value={formData.destinationId}
-              onChange={handleChange}
+              onChange={handleChange} 
+              label="Destination"
               required
             >
-              <option value="">-- Select a Destination --</option>
+              <MenuItem value="">
+                <em>-- Select a Destination --</em>
+              </MenuItem>
               {destinations.map((destination) => (
-                <option key={destination._id} value={destination._id}>
+                <MenuItem key={destination._id} value={destination._id}>
                   {destination.name} ({destination.country})
-                </option>
+                </MenuItem>
               ))}
-            </select>
-          </div>
-
-          <button type="submit">Create</button>
-          <button type="button" onClick={() => navigate("/activities")}>
-            Cancel
-          </button>
-        </form>
+            </Select>
+          </FormControl>
+          
+          <Box display="flex" gap={2} mt={2}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                bgcolor: darkGreen,
+                color: "white",
+                fontWeight: "bold",
+                "&:hover": { bgcolor: "#1B5E20" },
+              }}
+              fullWidth
+            >
+              Create
+            </Button>
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={() => navigate("/activities")}
+              fullWidth
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Box>
       )}
-    </div>
-  )
-}
+    </Container>
+  );
+};
 
-export default ActivityCreatePage
+export default ActivityCreatePage;

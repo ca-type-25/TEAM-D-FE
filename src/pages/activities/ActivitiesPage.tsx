@@ -1,67 +1,170 @@
-import React, { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
-import { API_URL } from "../../utils/config"
-import { Activity } from "../../types/TypesExport"
-import API from "../../utils/api"
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { API_URL } from "../../utils/config";
+import { Activity } from "../../types/TypesExport";
+import API from "../../utils/api";
+
+
+import {
+  Container,
+  Typography,
+  Button,
+  Box,
+  CircularProgress,
+  Alert,
+  Card,
+  CardContent,
+  Stack,
+} from "@mui/material";
+
+const darkGreen = "#2E7D32";
+const lightBackground = "#f9f9f9";
 
 const ActivitiesPage: React.FC = () => {
-
-  const [activities, setActivities] = useState<Activity[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await API.get(`${API_URL}/activities`)
-        setActivities(response.data)
+        const response = await API.get(`${API_URL}/activities`);
+        setActivities(response.data);
       } catch (err) {
-        setError("An error occurred while fetching activities.")
-        console.error(err)
+        setError("An error occurred while fetching activities.");
+        console.error(err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchActivities()
-  }, [])
-
+    fetchActivities();
+  }, []);
 
   if (loading) {
-    return <div style={{ textAlign: "center", marginTop: "50px" }}>Loading...</div>
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="80vh"
+      >
+        <CircularProgress color="primary" />
+      </Box>
+    );
   }
-
 
   if (error) {
-    return <div>Error: {error}</div>
+    return (
+      <Container maxWidth="sm" sx={{ mt: 5 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
   }
 
-
   return (
-    <div>
-      <h1>Activities Page</h1>
+    <Container
+      maxWidth="lg"
+      sx={{
+        py: 5,
+        bgcolor: lightBackground,
+        borderRadius: 2,
+        boxShadow: 1,
+      }}
+    >
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
+      >
+        <Typography variant="h4" fontWeight="bold" color="text.primary">
+          Activities
+        </Typography>
 
-      <div>
-        <Link to="/create-activity">
-          <button>Create Activity</button>
-        </Link>
-      </div>
+        <Button
+          component={Link}
+          to="/create-activity"
+          variant="contained"
+          sx={{
+            bgcolor: darkGreen,
+            color: "white",
+            fontWeight: "bold",
+            "&:hover": {
+              bgcolor: "#1B5E20",
+            },
+          }}
+        >
+          Create Activity
+        </Button>
+      </Box>
 
-      <ul>
-        {activities.map((activity) => (
-          <li key={activity._id}>
-            <Link to={`/activities/${activity._id}`}>
-              <strong>{activity.name}</strong>: {activity.description}
-            </Link>
-            <div>
-              <span>Price: {activity.price} EUR</span>
-              <span> Destinations: {activity.destinationIds?.length || 0} </span>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
+      {activities.length === 0 ? (
+        <Typography align="center" variant="h6" color="text.secondary">
+          No activities found.
+        </Typography>
+      ) : (
+        <Stack spacing={3}>
+          {activities.map((activity) => (
+            <Card
+              key={activity._id}
+              sx={{
+                boxShadow: 2,
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                "&:hover": {
+                  transform: "scale(1.01)",
+                  boxShadow: 4,
+                },
+              }}
+            >
+              <CardContent>
+                <Typography
+                  variant="h6"
+                  fontWeight="bold"
+                  gutterBottom
+                  color={darkGreen}
+                >
+                  <Link
+                    to={`/activities/${activity._id}`}
+                    style={{ color: darkGreen, textDecoration: "none" }}
+                  >
+                    {activity.name}
+                  </Link>
+                </Typography>
 
-export default ActivitiesPage
+                <Typography variant="body2" paragraph color="text.secondary">
+                  {activity.description || "No description provided."}
+                </Typography>
+
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mt={1}
+                >
+                  <Typography variant="body2" fontWeight="500">
+                    Price: <strong>{activity.price}</strong> EUR
+                  </Typography>
+
+                  <Typography variant="body2" color="text.secondary">
+                    Destinations:{" "}
+                    <strong>{activity.destinationIds?.length || 0}</strong>
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          ))}
+        </Stack>
+      )}
+
+
+      <Box mt={5} textAlign="center">
+        <Typography variant="body2" color="text.secondary">
+          © {new Date().getFullYear()} Trip planner – All rights reserved
+        </Typography>
+      </Box>
+    </Container>
+  );
+};
+
+export default ActivitiesPage;

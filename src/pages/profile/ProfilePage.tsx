@@ -9,6 +9,7 @@ import {
   Paper
 } from '@mui/material'
 import { User } from '../../types/TypesExport'
+import { useAuth } from '../../AuthContext'
 
 const ProfilePage = () => {
   const [form, setForm] = useState<User>({
@@ -17,9 +18,10 @@ const ProfilePage = () => {
   const [editMode, setEditMode] = useState(false)
   const [notLoggedIn, setNotLoggedIn] = useState(false)
   const navigate = useNavigate()
+  const { logoutUser, user } = useAuth()
 
-  const userId = localStorage.getItem('userId')
-  const token = localStorage.getItem('token')
+  const userId = user?.id || null
+  const token = localStorage.getItem('token') 
 
   useEffect(() => {
     if (!userId) {
@@ -75,8 +77,7 @@ const ProfilePage = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('userId')
+    logoutUser()
     navigate('/login')
   }
 

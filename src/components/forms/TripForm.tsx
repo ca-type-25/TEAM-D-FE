@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { API_URL } from "../../utils/config"
-import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { Trip } from "../../types/TypesExport"
 import CATEGORIES from "../../config/categories"
@@ -18,6 +17,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material"
+import API from "../../utils/api"
 
 type TripFormProps = {
     editTripData?: Trip
@@ -53,7 +53,6 @@ const TripsForm: React.FC<TripFormProps> = ({ editTripData }) => {
             )
         }
     }, [editTripData])
-
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault()
 
@@ -65,21 +64,12 @@ const TripsForm: React.FC<TripFormProps> = ({ editTripData }) => {
             destination: selectedDestinations,
         }
 
-        const token = localStorage.getItem("token")
 
         if (editTripData) {
-            axios.put(`${API_URL}/trips/${editTripData._id}`, newTrip, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            API.put(`${API_URL}/trips/${editTripData._id}`, newTrip)
             navigate(`/trips`)
         } else {
-            axios.post(`${API_URL}/trips`, newTrip, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+            API.post(`${API_URL}/trips`, newTrip)
             navigate(`/trips`)
         }
     }

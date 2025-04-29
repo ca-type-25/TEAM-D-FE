@@ -21,8 +21,10 @@ import ProfilePage from "./pages/profile/ProfilePage"
 import LoginPage from "./pages/login/LoginPage"
 import RegisterPage from "./pages/register/RegisterPage"
 import MyTrips from "./pages/trips/MyTrips"
+import { useAuth } from "./AuthContext"
 
 function App() {
+  const { user } = useAuth()
 
   return (
     <>
@@ -31,11 +33,14 @@ function App() {
         <Routes>
 
           <Route index element={<HomePage />}/>
-          <Route path="login" element={<LoginPage />}/>
-          <Route path="user-profile" element={<ProfilePage />} />
-          <Route path="register" element={<RegisterPage />}/>
-        
-
+          {user ? (
+            <Route path="user-profile" element={<ProfilePage />} />
+          ) : (
+            <>
+            <Route path="login" element={<LoginPage />}/>
+            <Route path="register" element={<RegisterPage />}/> 
+            </>
+          )}
 
           <Route path="trips" element={<TripsPage />} />
           <Route path="trips/:id" element={<TripsItem />} />

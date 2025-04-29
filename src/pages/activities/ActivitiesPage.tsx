@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
-import axios from "axios"
 import { Link } from "react-router-dom"
 import { API_URL } from "../../utils/config"
 import { Activity } from "../../types/TypesExport"
+import API from "../../utils/api"
 
 const ActivitiesPage: React.FC = () => {
 
@@ -13,7 +13,7 @@ const ActivitiesPage: React.FC = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await axios.get(`${API_URL}/activities`)
+        const response = await API.get(`${API_URL}/activities`)
         setActivities(response.data)
       } catch (err) {
         setError("An error occurred while fetching activities.")

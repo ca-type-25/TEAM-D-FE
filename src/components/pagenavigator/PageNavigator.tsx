@@ -1,8 +1,13 @@
 import { NavLink } from "react-router-dom"
 import Button from "@mui/material/Button"
 import './PageNavigator.css'
+import { useAuth } from "../../AuthContext"
 
 const PageNavigator: React.FC = () => {
+
+  const { user } = useAuth()
+
+
     return (
         <div className="pageNavigators">
             <NavLink to={'/'}>
@@ -20,9 +25,12 @@ const PageNavigator: React.FC = () => {
             <NavLink to={'/reviews'}>
                 <Button variant="text" color="primary">Reviews</Button>
             </NavLink>
-            <NavLink to={'/my-trips'}>
-                <Button variant="text" color="primary">My trips</Button>
-            </NavLink>
+
+            {user && (
+                <NavLink to={'/my-trips'}>
+                    <Button variant="text" color="primary">My trips</Button>
+                </NavLink>
+            )}
             <NavLink to={'/login'}>
                 <Button variant="text" color="primary">Login</Button>
             </NavLink>

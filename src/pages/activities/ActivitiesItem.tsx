@@ -1,87 +1,161 @@
-import React, { useEffect, useState } from "react"
-import { useParams, useNavigate, Link } from "react-router-dom"
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
+import { Activity } from "../../types/TypesExport";
+import { API_URL } from "../../utils/config";
+import API from "../../utils/api";
 
-import { Activity } from "../../types/TypesExport"
-import { API_URL } from "../../utils/config"
-import API from "../../utils/api"
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardActions,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
+
+const darkGreen = "#2E7D32";
 
 const ActivityPage: React.FC = () => {
-  const [activity, setActivity] = useState<Activity | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [activity, setActivity] = useState<Activity | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchActivity = async () => {
       try {
-        const response = await API.get<Activity>(`${API_URL}/activities/${id}`)
+        const response = await API.get<Activity>(`${API_URL}/activities/${id}`);
         setActivity(response.data);
       } catch (err) {
-        setError("An error occurred while fetching the activity.")
-        console.error(err)
+        setError("An error occurred while fetching the activity.");
+        console.error(err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchActivity()
-  }, [id])
-
+    fetchActivity();
+  }, [id]);
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this activity?")) {
-      return
-    }
+    if (!window.confirm("Are you sure you want to delete this activity?")) return;
 
     try {
-      await API.delete(`${API_URL}/activities/${id}`)
-      navigate("/activities")
+      await API.delete(`${API_URL}/activities/${id}`);
+      navigate("/activities");
     } catch (error) {
-      console.error("Error deleting activity:", error)
+      console.error("Error deleting activity:", error);
     }
-  }
-
+  };
 
   if (loading) {
-    return <div style={{ textAlign: "center", marginTop: "50px" }}>Loading...</div>
+    return (
+      <Box display="flex" justifyContent="center" mt={5}>
+        <CircularProgress color="primary" />
+      </Box>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>
+    return (
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
   }
 
   if (!activity) {
-    return <div>No activity found</div>
+    return (
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <Alert severity="info">No activity found</Alert>
+      </Container>
+    );
   }
 
   return (
-    <div>
-      <h1>Activity Page</h1>
+    <Container maxWidth="md" sx={{ py: 5 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold" color={darkGreen}>
+        {activity.name}
+      </Typography>
 
-      <p><strong>Name:</strong> {activity.name}</p>
-      <p><strong>Price:</strong> {activity.price} EUR.</p>
-      <p><strong>Description:</strong> {activity.description}</p>
+      <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+        <CardContent>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle1" fontWeight="bold">
+              Price:
+            </Typography>
+            <Typography variant="body1">{activity.price} EUR</Typography>
+          </Box>
 
-      {activity.destinationIds && activity.destinationIds.length > 0 ? (
-        <p>
-          <strong>Destination:</strong>{" "}
-          <Link to={`/destinations/${activity.destinationIds[0]._id}`}>
-            {activity.destinationIds[0].name}, {activity.destinationIds[0].country}
-          </Link>
-        </p>
-      ) : (
-        <p><strong>Destination:</strong> Not available</p>
-      )}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle1" fontWeight="bold">
+              Description:
+            </Typography>
+            <Typography variant="body1">{activity.description || "Not provided"}</Typography>
+          </Box>
 
-      <div>
-        <button onClick={() => navigate(`/edit-activity/${id}`)}>Edit</button>
-        <button onClick={handleDelete}>Delete</button>
-      </div>
-    </div>
-  )
-}
+          <Box>
+            <Typography variant="subtitle1" fontWeight="bold">
+              Destination:
+            </Typography>
+            {activity.destinationIds && activity.destinationIds.length > 0 ? (
+              <Typography variant="body1">
+                <Link
+                  to={`/destinations/${activity.destinationIds[0]._id}`}
+                  style={{ color: darkGreen, textDecoration: "none" }}
+                >
+                  {activity.destinationIds[0].name}, {activity.destinationIds[0].country}
+                </Link>
+              </Typography>
+            ) : (
+              <Typography variant="body1" color="text.secondary">
+                Not available
+              </Typography>
+            )}
+          </Box>
+        </CardContent>
 
-export default ActivityPage
+        <CardActions
+          sx={{
+            display: "flex",
+            justifyContent: "flex-start",
+            gap: 2,
+            px: 2,
+            pb: 2,
+          }}
+        >
+          <Button
+            component={Link}
+            to={`/edit-activity/${id}`}
+            variant="contained"
+            sx={{
+              bgcolor: darkGreen,
+              color: "white",
+              fontWeight: "bold",
+              "&:hover": {
+                bgcolor: "#1B5E20",
+              },
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="outlined"
+            color="error"
+          >
+            Delete
+          </Button>
+        </CardActions>
+      </Card>
+    </Container>
+  );
+};
+
+export default ActivityPage;

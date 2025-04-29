@@ -1,7 +1,8 @@
-import axios from "axios";
+import axios from "axios"
+import { API_URL } from "../utils/config"
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_URL,
 });
 
 export const getDestinations = (
@@ -13,5 +14,14 @@ export const getDestinations = (
     params: { page, limit, sort },
   });
 };
+
+
+API.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+  if (token) {
+      config.headers.Authorization = (`Bearer ${token}`)
+  }
+  return config
+})
 
 export default API;

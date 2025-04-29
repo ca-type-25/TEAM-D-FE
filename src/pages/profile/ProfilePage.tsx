@@ -16,16 +16,16 @@ const ProfilePage = () => {
     name: '', surname: '', age: 0, nationality: '', email: ''
   })
   const [editMode, setEditMode] = useState(false)
-  const [notLoggedIn, setNotLoggedIn] = useState(false)
+  // const [notLoggedIn, setNotLoggedIn] = useState(false)
   const navigate = useNavigate()
-  const { logoutUser } = useAuth()
+  const { logoutUser, user } = useAuth()
 
-  const userId = localStorage.getItem('userId')
-  const token = localStorage.getItem('token')
+  const userId = user?.id || null
+  const token = localStorage.getItem('token') 
 
   useEffect(() => {
     if (!userId) {
-      setNotLoggedIn(true)
+      // setNotLoggedIn(true)
       return
     }
 
@@ -39,22 +39,22 @@ const ProfilePage = () => {
     fetchUser()
   }, [userId])
 
-  if (notLoggedIn) {
-    return (
-      <Container maxWidth="sm">
-        <Paper elevation={3} sx={{ p: 4, mt: 6, textAlign: 'center' }}>
-          <Typography variant="h5" color="error">⚠️ Need to login</Typography>
-          <Button
-            variant="contained"
-            sx={{ mt: 2 }}
-            onClick={() => navigate('/login')}
-          >
-            Go to Login
-          </Button>
-        </Paper>
-      </Container>
-    )
-  }
+  // if (notLoggedIn) {
+  //   return (
+  //     <Container maxWidth="sm">
+  //       <Paper elevation={3} sx={{ p: 4, mt: 6, textAlign: 'center' }}>
+  //         <Typography variant="h5" color="error">⚠️ Need to login</Typography>
+  //         <Button
+  //           variant="contained"
+  //           sx={{ mt: 2 }}
+  //           onClick={() => navigate('/login')}
+  //         >
+  //           Go to Login
+  //         </Button>
+  //       </Paper>
+  //     </Container>
+  //   )
+  // }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })

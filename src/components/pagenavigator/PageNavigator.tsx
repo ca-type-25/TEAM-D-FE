@@ -6,7 +6,7 @@ import { useAuth } from "../../AuthContext"
 const PageNavigator: React.FC = () => {
 
   const { user } = useAuth()
-
+  
 
     return (
         <div className="pageNavigators">
@@ -26,20 +26,26 @@ const PageNavigator: React.FC = () => {
                 <Button variant="text" color="primary">Reviews</Button>
             </NavLink>
 
-            {user && (
+            {user ? (
+                <>
                 <NavLink to={'/my-trips'}>
                     <Button variant="text" color="primary">My trips</Button>
                 </NavLink>
+
+                <NavLink to={'/user-profile'}>
+                    <Button variant="text" color="primary">Profile</Button>
+                </NavLink>
+                </>
+            ) : (
+                <>
+                <NavLink to={'/login'}>
+                    <Button variant="text" color="primary">Login</Button>
+                </NavLink>
+                <NavLink to={'/register'}>
+                    <Button variant="text" color="primary">Register</Button>
+                </NavLink>
+                </>
             )}
-            <NavLink to={'/login'}>
-                <Button variant="text" color="primary">Login</Button>
-            </NavLink>
-            <NavLink to={'/register'}>
-                <Button variant="text" color="primary">Register</Button>
-            </NavLink>
-            <NavLink to={'/user-profile'}>
-                <Button variant="text" color="primary">Profile</Button>
-            </NavLink>
         </div>
     )
 }

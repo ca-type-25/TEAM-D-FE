@@ -46,6 +46,17 @@ const PageNavigator: React.FC = () => {
                 </NavLink>
                 </>
             )}
+            <NavLink to={'/login'}>
+                <Button variant="text" color="primary">Login</Button>
+            </NavLink>
+            <NavLink to={'/register'}>
+                <Button variant="text" color="primary">Register</Button>
+            </NavLink>
+            {user && (
+                <NavLink to={'/user-profile'}>
+                <Button variant="text" color="primary">Profile</Button>
+            </NavLink>
+            )}
         </div>
     )
 }

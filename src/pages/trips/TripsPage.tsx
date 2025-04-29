@@ -3,8 +3,17 @@ import { Trip } from "../../types/TypesExport"
 import { API_URL } from "../../utils/config"
 import { Link } from "react-router-dom"
 
-const TripsPage: React.FC = () => {
+import {
+    Box,
+    Typography,
+    List,
+    ListItem,
+    ListItemText,
+    Button,
+    Paper,
+} from "@mui/material"
 
+const TripsPage: React.FC = () => {
     const [trips, setTrips] = useState<Trip[]>([])
 
     useEffect(() => {
@@ -15,28 +24,46 @@ const TripsPage: React.FC = () => {
         }
         fetchTrips()
     }, [])
-    
-    
 
     return (
-        <div>
+        <Box sx={{ padding: 4 }}>
             {trips && trips.length > 0 ? (
-                <div>
-                    <h1>{trips.length > 1 ? 'Trips:' : 'Trip:'}</h1>
-                    <ul>
-                        {trips.map((trip, index) => (
-                            <li key={index}>
-                                <Link to={`/trips/${trip._id}`}>{trip.name} (user: {trip.user.name} {trip.user.surname})</Link> 
-                            </li>
+                <Paper elevation={3} sx={{ padding: 3 }}>
+                    <Typography variant="h4" gutterBottom>
+                        {trips.length > 1 ? "Trips:" : "Trip:"}
+                    </Typography>
+                    <List>
+                        {trips.map((trip) => (
+                            <ListItem
+                                key={trip._id}
+                                component={Link}
+                                to={`/trips/${trip._id}`}
+                                button
+                            >
+                                <ListItemText
+                                    primary={trip.name}
+                                    secondary={`User: ${trip.user.name} ${trip.user.surname}`}
+                                />
+                            </ListItem>
                         ))}
-                    </ul>
-                </div>
+                    </List>
+                </Paper>
             ) : (
-                <h1>No trips yet...</h1>
+                <Typography variant="h5">No trips yet...</Typography>
             )}
 
-            <Link to={'/create-trip'}>Create trip!</Link>
-        </div>
+            <Box sx={{ marginTop: 4 }}>
+                <Button
+                    component={Link}
+                    to="/create-trip"
+                    variant="contained"
+                    color="primary"
+                >
+                    Create trip!
+                </Button>
+            </Box>
+        </Box>
     )
 }
+
 export default TripsPage

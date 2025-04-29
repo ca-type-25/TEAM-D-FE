@@ -9,10 +9,6 @@ import DestinationsPage from "./pages/destinations/DestinationsPage"
 import DestinationItem from "./pages/destinations/DestinationsItem"
 import CreateDestination from "./pages/destinations/CreateDestination"
 import EditDestination from "./pages/destinations/EditDestination"
-import CountriesPage from "./pages/countries/CountriesPage"
-import CountriesItem from "./pages/countries/CountriesItem"
-import CreateCountry from "./pages/countries/CreateCountry"
-import EditCountry from "./pages/countries/EditCountry"
 import ActivitiesPage from "./pages/activities/ActivitiesPage"
 import ActivitiesItem from "./pages/activities/ActivitiesItem"
 import CreateActivity from "./pages/activities/CreateActivity"
@@ -52,12 +48,6 @@ function App() {
           <Route path="destinations/:id" element={<DestinationItem />} />
           <Route path="create-destination" element={<CreateDestination />} />
           <Route path="edit-destination" element={<EditDestination />} />
-
-
-          <Route path="countries" element={<CountriesPage />} />
-          <Route path="countries/:id" element={<CountriesItem />} />
-          <Route path="create-country" element={<CreateCountry />} />
-          <Route path="edit-country" element={<EditCountry />} />
 
 
           <Route path="activities" element={<ActivitiesPage />} />

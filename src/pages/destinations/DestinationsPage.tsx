@@ -2,7 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getDestinations } from "../../utils/api";
 
-// Tipas atitinkantis destination modelį iš backend
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Link as MuiLink,
+  CircularProgress,
+  Grid,
+} from "@mui/material";
+
 interface Destination {
   _id: string;
   name: string;
@@ -17,67 +27,105 @@ interface Destination {
 const DestinationsPage: React.FC = () => {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const limit = 15;
-  const sort = "country"; // rūšiavimas pagal šalį
   const navigate = useNavigate();
 
-  // Užkrovimas kai keičiasi puslapis
+  const limit = 1000;
+  const page = 1;
+  const sort = "country";
+
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
         const response = await getDestinations(page, limit, sort);
         setDestinations(response.data);
       } catch (error) {
-        console.error("Klaida gaunant vietas:", error);
+        console.error("Error fetching destinations:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchDestinations();
-  }, [page]);
+  }, []);
 
-  if (loading) return <p>Kraunama...</p>;
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={5}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <div>
-      <h1>Visos vietos (Destinations)</h1>
+    <Box p={3}>
+      <Typography variant="h4" gutterBottom align="center">
+        All Destinations
+      </Typography>
 
-      {/* Nuoroda į sukurti naują vietą */}
-      <Link to={"/create-destination"}>➕ Pridėti naują vietą</Link>
-
-      <ul>
-        {destinations.map((d) => (
-          <li key={d._id} style={{ marginBottom: "1rem" }}>
-            {/* Vieta ir šalis */}
-            <Link to={`/destinations/${d._id}`}>
-              <strong>{d.name}</strong>
-            </Link>{" "}
-            – {d.country || "Nežinoma šalis"}
-            <br />
-            <small>{d.description}</small>
-            <br />
-            {/* Redagavimo mygtukas */}
-            <button onClick={() => navigate(`/edit-destination?id=${d._id}`)}>
-              Edit
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      {/* Navigacija tarp puspių */}
-      <div style={{ marginTop: "1rem" }}>
-        <button
-          onClick={() => setPage((p) => Math.max(p - 1, 1))}
-          disabled={page === 1}
+      <Box mb={3} display="flex" justifyContent="center">
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to="/create-destination"
         >
-          Ankstesnis
-        </button>
-        <span style={{ margin: "0 1rem" }}>Puslapis: {page}</span>
-        <button onClick={() => setPage((p) => p + 1)}>Kitas</button>
-      </div>
-    </div>
+          ➕ Add New Destination
+        </Button>
+      </Box>
+
+      {/* Cards */}
+      <Grid container spacing={2} justifyContent="center">
+        {destinations.map((d) => (
+          <Grid item key={d._id} xs={6} sm={4} md={3} lg={2}>
+            <Card
+              sx={{
+                height: 180,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                textAlign: "center",
+                padding: 1,
+              }}
+            >
+              <CardContent>
+                <MuiLink
+                  component={Link}
+                  to={`/destinations/${d._id}`}
+                  underline="hover"
+                >
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    color="primary"
+                  >
+                    {d.name}
+                  </Typography>
+                </MuiLink>
+
+                <Typography variant="body2" color="textSecondary">
+                  {d.country || "Unknown country"}
+                </Typography>
+
+                <Typography variant="body2" mt={1}>
+                  {d.description.length > 50
+                    ? d.description.slice(0, 50) + "..."
+                    : d.description}
+                </Typography>
+              </CardContent>
+
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                onClick={() => navigate(`/edit-destination?id=${d._id}`)}
+              >
+                Edit
+              </Button>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 };
 

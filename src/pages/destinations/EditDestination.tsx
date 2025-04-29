@@ -2,52 +2,53 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import API from "../../utils/api";
+import { TextField, MenuItem, Button, Box, Typography } from "@mui/material";
 
-// Tipas šaliai iš REST API
 interface Country {
   name: {
     common: string;
   };
 }
 
+const inputStyle = {
+  width: "160px",
+};
+
 const EditDestination: React.FC = () => {
   const [searchParams] = useSearchParams();
   const destinationId = searchParams.get("id");
   const navigate = useNavigate();
 
-  // Būsena šalių dropdown'ui
   const [countries, setCountries] = useState<{ name: string }[]>([]);
-
-  // Formos duomenys
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     latitude: 0,
     longitude: 0,
-    country: "", // dabar tiesiog string
+    country: "",
   });
 
   const [loading, setLoading] = useState(true);
+  const [tooltips, setTooltips] = useState({
+    latitude: false,
+    longitude: false,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Vienu metu gaunam ir destination duomenis, ir šalių sąrašą
         const [destinationRes, countriesRes] = await Promise.all([
           API.get(`/destinations/${destinationId}`),
           axios.get<Country[]>("https://restcountries.com/v3.1/all"),
         ]);
 
-        // Nuskaityti esamos vietos duomenys
         const destination = destinationRes.data;
 
-        // Apdorojam ir rūšiuojam šalis dropdown'ui
         const sorted = countriesRes.data
           .map((c) => ({ name: c.name.common }))
           .sort((a, b) => a.name.localeCompare(b.name));
         setCountries(sorted);
 
-        // Užpildom formą su esamais duomenimis
         setFormData({
           name: destination.name,
           description: destination.description,
@@ -55,10 +56,10 @@ const EditDestination: React.FC = () => {
             destination.latitude || destination.geolocation?.latitude || 0,
           longitude:
             destination.longitude || destination.geolocation?.longitude || 0,
-          country: destination.country || "", // šalis kaip string
+          country: destination.country || "",
         });
       } catch (error) {
-        console.error("Klaida kraunant duomenis:", error);
+        console.error("Error loading data:", error);
       } finally {
         setLoading(false);
       }
@@ -67,16 +68,12 @@ const EditDestination: React.FC = () => {
     if (destinationId) fetchData();
   }, [destinationId]);
 
-  // Valdo įrašų keitimą
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Siunčia atnaujintus duomenis į backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -89,90 +86,204 @@ const EditDestination: React.FC = () => {
           longitude: Number(formData.longitude),
         },
       });
-      alert("Sėkmingai atnaujinta!");
+      alert("Successfully updated!");
       navigate("/destinations");
     } catch (error) {
-      console.error("Klaida atnaujinant vietą:", error);
+      console.error("Error updating destination:", error);
     }
   };
 
-  // Ištrina vietą
   const handleDelete = async () => {
-    const confirmed = window.confirm("Ar tikrai nori ištrinti šią vietą?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this destination?"
+    );
     if (!confirmed || !destinationId) return;
 
     try {
       await API.delete(`/destinations/${destinationId}`);
-      alert("Vieta ištrinta");
+      alert("Destination deleted");
       navigate("/destinations");
     } catch (error) {
-      console.error("Klaida trinant vietą", error);
+      console.error("Error deleting destination", error);
     }
   };
 
-  if (loading) return <p>Kraunama...</p>;
-  if (!destinationId) return <p>Neteisingas ID</p>;
+  if (loading) return <p>Loading...</p>;
+  if (!destinationId) return <p>Invalid ID</p>;
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Redaguoti vietą</h1>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 5, px: 3 }}>
+      <Typography variant="h4" align="center" gutterBottom>
+        Edit Destination
+      </Typography>
 
-      {/* Pavadinimas */}
-      <input
-        name="name"
-        placeholder="Pavadinimas"
-        value={formData.name}
-        onChange={handleChange}
-      />
+      <Box display="flex" justifyContent="center" gap={2} mb={2}>
+        <Button variant="contained" type="submit">
+          Update
+        </Button>
+        <Button variant="contained" color="error" onClick={handleDelete}>
+          Delete
+        </Button>
+      </Box>
 
-      {/* Aprašymas */}
-      <textarea
-        name="description"
-        placeholder="Aprašymas"
-        value={formData.description}
-        onChange={handleChange}
-      />
-
-      {/* Koordinatės */}
-      <input
-        name="latitude"
-        type="number"
-        placeholder="Platuma"
-        value={formData.latitude}
-        onChange={handleChange}
-      />
-      <input
-        name="longitude"
-        type="number"
-        placeholder="Ilguma"
-        value={formData.longitude}
-        onChange={handleChange}
-      />
-
-      {/* Šalies pasirinkimas (dropdown) */}
-      <select name="country" value={formData.country} onChange={handleChange}>
-        <option value="">Pasirink šalį</option>
-        {countries.map((c) => (
-          <option key={c.name} value={c.name}>
-            {c.name}
-          </option>
-        ))}
-      </select>
-
-      <br />
-
-      {/* Atnainti / ištrinti */}
-      <button type="submit" style={{ marginRight: "10px" }}>
-        Atnaujinti
-      </button>
-      <button
-        type="button"
-        onClick={handleDelete}
-        style={{ backgroundColor: "red", color: "white" }}
+      <Box
+        display="flex"
+        justifyContent="center"
+        flexWrap="wrap"
+        gap={2}
+        mb={2}
       >
-        Ištrinti
-      </button>
-    </form>
+        <TextField
+          name="name"
+          label="Name"
+          value={formData.name}
+          onChange={handleChange}
+          size="small"
+          sx={inputStyle}
+        />
+
+        {/* LATITUDE */}
+        <Box position="relative" display="inline-block">
+          <TextField
+            name="latitude"
+            label="Latitude"
+            type="number"
+            value={formData.latitude}
+            onMouseEnter={() => setTooltips((t) => ({ ...t, latitude: true }))}
+            onMouseLeave={() => setTooltips((t) => ({ ...t, latitude: false }))}
+            onInput={(e) => {
+              const target = e.target as HTMLInputElement;
+              const value = parseFloat(target.value);
+              if (value < -90 || value > 90) {
+                target.value = "";
+              } else {
+                setFormData((prev) => ({ ...prev, latitude: value }));
+              }
+            }}
+            inputProps={{ min: -90, max: 90 }}
+            size="small"
+            sx={inputStyle}
+          />
+          {tooltips.latitude && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: "40px",
+                left: 0,
+                backgroundColor: "#fff4e5",
+                border: "2px solid black",
+                borderRadius: "10px",
+                padding: "6px 10px",
+                fontSize: "12px",
+                zIndex: 1,
+                whiteSpace: "nowrap",
+              }}
+            >
+              Enter latitude from -90 to 90
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "-10px",
+                  left: "20px",
+                  width: 0,
+                  height: 0,
+                  borderBottom: "10px solid black",
+                  borderLeft: "10px solid transparent",
+                  borderRight: "10px solid transparent",
+                }}
+              />
+            </Box>
+          )}
+        </Box>
+
+        {/* LONGITUDE */}
+        <Box position="relative" display="inline-block">
+          <TextField
+            name="longitude"
+            label="Longitude"
+            type="number"
+            value={formData.longitude}
+            onMouseEnter={() => setTooltips((t) => ({ ...t, longitude: true }))}
+            onMouseLeave={() =>
+              setTooltips((t) => ({ ...t, longitude: false }))
+            }
+            onInput={(e) => {
+              const target = e.target as HTMLInputElement;
+              const value = parseFloat(target.value);
+              if (value < -180 || value > 180) {
+                target.value = "";
+              } else {
+                setFormData((prev) => ({ ...prev, longitude: value }));
+              }
+            }}
+            inputProps={{ min: -180, max: 180 }}
+            size="small"
+            sx={inputStyle}
+          />
+          {tooltips.longitude && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: "40px",
+                left: 0,
+                backgroundColor: "#fff4e5",
+                border: "2px solid black",
+                borderRadius: "10px",
+                padding: "6px 10px",
+                fontSize: "12px",
+                zIndex: 1,
+                whiteSpace: "nowrap",
+              }}
+            >
+              Enter longitude from -180 to 180
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "-10px",
+                  left: "20px",
+                  width: 0,
+                  height: 0,
+                  borderBottom: "10px solid black",
+                  borderLeft: "10px solid transparent",
+                  borderRight: "10px solid transparent",
+                }}
+              />
+            </Box>
+          )}
+        </Box>
+
+        <TextField
+          select
+          name="country"
+          label="Select country"
+          value={formData.country}
+          onChange={handleChange}
+          size="small"
+          sx={inputStyle}
+        >
+          <MenuItem value="">-</MenuItem>
+          {countries.map((c, i) => (
+            <MenuItem key={i} value={c.name}>
+              {c.name}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+
+      {/* DESCRIPTION */}
+      <Box display="flex" justifyContent="center">
+        <TextField
+          name="description"
+          label="Description"
+          value={formData.description}
+          onChange={handleChange}
+          multiline
+          rows={5}
+          fullWidth
+          sx={{ maxWidth: "800px" }}
+        />
+      </Box>
+    </Box>
   );
 };
 

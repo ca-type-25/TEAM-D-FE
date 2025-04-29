@@ -1,31 +1,31 @@
 import { useState } from 'react'
 import { TextField, Button, Box } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../AuthContext'
+import API from '../../utils/api'
+import { API_URL } from '../../utils/config'
 
 const LoginForm = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const { loginUser } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const res = await fetch('http://localhost:3000/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      })
-      const data = await res.json()
-      if (res.ok) {
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('userId', data.id)
-        navigate('/user-profile')
-      } else {
-        alert(data.message || 'Login failed')
+      const loginInfo = { email, password }
+      const res = await API.post(`${API_URL}/users/login`, loginInfo)
+      const { token } = res.data
+
+      if (token) {
+          loginUser(token)
+          navigate('/dashboard/profile')
       }
-    } catch (err) {
-      console.error(err)
-    }
+
+  } catch (error) {
+      console.log('Failed to register', error)
+  }
   }
 
   return (

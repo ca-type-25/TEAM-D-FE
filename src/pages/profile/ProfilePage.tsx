@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { User } from '../../types/TypesExport'
+import { useAuth } from '../../AuthContext'
 
 const ProfilePage = () => {
   const [form, setForm] = useState<User>({
@@ -8,6 +9,7 @@ const ProfilePage = () => {
   })
   const [editMode, setEditMode] = useState(false)
   const navigate = useNavigate()
+  const { logoutUser } = useAuth()
 
   const userId = localStorage.getItem('userId')
   const token = localStorage.getItem('token')
@@ -45,8 +47,7 @@ const ProfilePage = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('userId')
+    logoutUser()
     navigate('/login')
   }
 

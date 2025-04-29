@@ -21,6 +21,7 @@ import ProfilePage from "./pages/profile/ProfilePage"
 import LoginPage from "./pages/login/LoginPage"
 import RegisterPage from "./pages/register/RegisterPage"
 import MyTrips from "./pages/trips/MyTrips"
+import PrivateRoute from "./components/privateRoute/PrivateRoute"
 
 function App() {
 
@@ -32,36 +33,37 @@ function App() {
 
           <Route index element={<HomePage />}/>
           <Route path="login" element={<LoginPage />}/>
-          <Route path="user-profile" element={<ProfilePage />} />
-          <Route path="register" element={<RegisterPage />}/>
-        
-
+          <Route path="register" element={<RegisterPage />}/> 
 
           <Route path="trips" element={<TripsPage />} />
           <Route path="trips/:id" element={<TripsItem />} />
-          <Route path="create-trip" element={<CreateTrip />} />
-          <Route path="edit-trip/:id" element={<EditTrip />} />
-          <Route path="my-trips" element={<MyTrips />} />
-
 
           <Route path="destinations" element={<DestinationsPage />} />
           <Route path="destinations/:id" element={<DestinationItem />} />
-          <Route path="create-destination" element={<CreateDestination />} />
-          <Route path="edit-destination" element={<EditDestination />} />
-
 
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="activities/:id" element={<ActivitiesItem />} />
-          <Route path="create-activity" element={<CreateActivity />} />
-          <Route path="edit-activity/:id" element={<EditActivity />} />
-
 
           <Route path="reviews" element={<ReviewsPage />} />
           <Route path="reviews/:id" element={<ReviewsItem />} />
-          <Route path="create-review" element={<CreateReview />} />
-          <Route path="edit-review" element={<EditReview />} />
 
 
+          <Route element={<PrivateRoute />}>
+            <Route path="user-profile" element={<ProfilePage />} />
+            <Route path="my-trips" element={<MyTrips />} />
+
+            <Route path="create-trip" element={<CreateTrip />} />
+            <Route path="edit-trip/:id" element={<EditTrip />} />
+
+            <Route path="create-destination" element={<CreateDestination />} />
+            <Route path="edit-destination" element={<EditDestination />} />
+
+            <Route path="create-activity" element={<CreateActivity />} />
+            <Route path="edit-activity/:id" element={<EditActivity />} />
+            
+            <Route path="create-review" element={<CreateReview />} />
+            <Route path="edit-review" element={<EditReview />} />
+          </Route>
           
 
         </Routes>

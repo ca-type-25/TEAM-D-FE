@@ -4,6 +4,7 @@ import axios from "axios";
 import { API_URL } from "../../utils/config";
 import { Destination } from "../../types/TypesExport";
 
+
 import {
   Container,
   Typography,
@@ -17,7 +18,7 @@ import {
   TextareaAutosize,
   CircularProgress,
   Alert,
-  SelectChangeEvent, 
+  SelectChangeEvent,
 } from "@mui/material";
 
 const darkGreen = "#2E7D32";
@@ -53,10 +54,7 @@ const ActivityCreatePage: React.FC = () => {
   }, []);
 
   const handleChange = (
-    event:
-      | SelectChangeEvent<string>
-      | React.ChangeEvent<HTMLInputElement 
-      | HTMLTextAreaElement>
+    event: SelectChangeEvent<string> | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
     const newValue = name === "price" ? Number(value) : value;
@@ -69,15 +67,25 @@ const ActivityCreatePage: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null); 
+
     try {
       await axios.post(`${API_URL}/activities`, {
-        ...formData,
+        name: formData.name,
+        price: formData.price,
+        description: formData.description,
         destinationIds: [formData.destinationId],
       });
+
       navigate("/activities");
-    } catch (error) {
-      setError("Error creating activity. Please try again.");
-      console.error("Error creating activity:", error);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Error creating activity.";
+
+      setError(errorMessage);
+      console.error("Create activity error:", error);
     }
   };
 
@@ -88,11 +96,13 @@ const ActivityCreatePage: React.FC = () => {
         Create Activity
       </Typography>
 
+
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
+
 
       {loadingDestinations ? (
         <Box display="flex" justifyContent="center" my={5}>
@@ -108,7 +118,7 @@ const ActivityCreatePage: React.FC = () => {
             gap: 3,
           }}
         >
-
+  
           <TextField
             label="Activity Name"
             name="name"
@@ -119,6 +129,7 @@ const ActivityCreatePage: React.FC = () => {
             fullWidth
           />
 
+   
           <TextField
             label="Price (EUR)"
             name="price"
@@ -151,13 +162,14 @@ const ActivityCreatePage: React.FC = () => {
             />
           </FormControl>
 
+        
           <FormControl fullWidth required>
             <InputLabel id="destination-label">Destination</InputLabel>
             <Select
               labelId="destination-label"
               name="destinationId"
               value={formData.destinationId}
-              onChange={handleChange} 
+              onChange={handleChange}
               label="Destination"
               required
             >
@@ -171,7 +183,8 @@ const ActivityCreatePage: React.FC = () => {
               ))}
             </Select>
           </FormControl>
-          
+
+    
           <Box display="flex" gap={2} mt={2}>
             <Button
               type="submit"

@@ -32,10 +32,9 @@ const ActivitiesPage: React.FC = () => {
     const fetchActivities = async () => {
       setLoading(true); 
       try {
-        const endpoint = priceFilter 
-          ? `${API_URL}/activities/filter/price?price=${priceFilter}` 
-          : `${API_URL}/activities`;
-        const response = await API.get(endpoint);
+        const response = await API.get(`${API_URL}/activities`, {
+          params: { price: priceFilter }
+        });
         setActivities(response.data);
       } catch (err) {
         setError("An error occurred while fetching activities.");

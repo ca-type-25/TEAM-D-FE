@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { API_URL } from "../../utils/config";
 import { Activity } from "../../types/TypesExport";
 import API from "../../utils/api";
@@ -25,10 +25,17 @@ const ActivitiesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [searchParams] = useSearchParams();
+  const priceFilter = searchParams.get("price");
+
   useEffect(() => {
     const fetchActivities = async () => {
+      setLoading(true); 
       try {
-        const response = await API.get(`${API_URL}/activities`);
+        const endpoint = priceFilter 
+          ? `${API_URL}/activities/filter/price?price=${priceFilter}` 
+          : `${API_URL}/activities`;
+        const response = await API.get(endpoint);
         setActivities(response.data);
       } catch (err) {
         setError("An error occurred while fetching activities.");
@@ -39,7 +46,7 @@ const ActivitiesPage: React.FC = () => {
     };
 
     fetchActivities();
-  }, []);
+  }, [priceFilter]);
 
   if (loading) {
     return (
@@ -79,24 +86,32 @@ const ActivitiesPage: React.FC = () => {
         mb={4}
       >
         <Typography variant="h4" fontWeight="bold" color="text.primary">
-          Activities
+          {priceFilter ? `Activities under ${priceFilter} EUR` : "All Activities"}
         </Typography>
 
-        <Button
-          component={Link}
-          to="/create-activity"
-          variant="contained"
-          sx={{
-            bgcolor: darkGreen,
-            color: "white",
-            fontWeight: "bold",
-            "&:hover": {
-              bgcolor: "#1B5E20",
-            },
-          }}
-        >
-          Create Activity
-        </Button>
+        <Box>
+          {priceFilter && (
+            <Button component={Link} to="/activities" sx={{ mr: 2, color: "text.secondary" }}>
+                Clear Filter
+              </Button>
+          )}
+
+          <Button
+            component={Link}
+            to="/create-activity"
+            variant="contained"
+            sx={{
+              bgcolor: darkGreen,
+              color: "white",
+              fontWeight: "bold",
+              "&:hover": {
+                bgcolor: "#1B5E20",
+              },
+            }}
+          >
+            Create Activity
+          </Button>
+        </Box>
       </Box>
 
       {activities.length === 0 ? (

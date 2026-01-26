@@ -22,6 +22,8 @@ import LoginPage from "./pages/login/LoginPage"
 import RegisterPage from "./pages/register/RegisterPage"
 import MyTrips from "./pages/trips/MyTrips"
 import PrivateRoute from "./components/privateRoute/PrivateRoute"
+import ActivitiesApiByPrice from "./pages/activities/ActivitiesApiByPrice"
+
 
 function App() {
 
@@ -43,6 +45,7 @@ function App() {
 
           <Route path="activities" element={<ActivitiesPage />} />
           <Route path="activities/:id" element={<ActivitiesItem />} />
+          <Route path="activities/filter/:price" element={<ActivitiesApiByPrice />} />
 
           <Route path="reviews" element={<ReviewsPage />} />
           <Route path="reviews/:id" element={<ReviewsItem />} />
